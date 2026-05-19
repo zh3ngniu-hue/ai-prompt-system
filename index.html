@@ -3,563 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AI Sentence Rewriter + Fintech Formatter | Gratis Multi-Provider</title>
+    <title>AI Suite · Rewriter · Fintech · Surat Otomatis</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             padding: 2rem 1.5rem;
             color: #1a2c3e;
         }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero { text-align: center; margin-bottom: 2rem; }
+        .hero h1 { font-size: 2rem; background: linear-gradient(135deg, #1F4E6E, #2C7A4D); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        .hero p { color: #2c5a6e; margin-top: 0.5rem; }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .hero {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .hero h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #1F4E6E, #2C7A4D);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .hero p {
-            color: #2c5a6e;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        .tab-container {
-            display: flex;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid #cbdde6;
-            padding-bottom: 0.5rem;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 2rem;
-            cursor: pointer;
-            transition: 0.2s;
-            color: #5f7f8c;
-        }
-
-        .tab-btn.active {
-            background: #1F4E6E;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-            padding: 1.8rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255,255,255,0.6);
-            transition: all 0.2s ease;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border-left: 5px solid #2C7A4D;
-            padding-left: 1rem;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 1rem 1.2rem;
-            font-size: 1rem;
-            font-family: inherit;
-            border: 1.5px solid #cbdde6;
-            border-radius: 1.5rem;
+        /* AI Global Controls */
+        .global-ai-bar {
             background: white;
-            resize: vertical;
-            transition: 0.2s;
-            line-height: 1.5;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #2C7A4D;
-            box-shadow: 0 0 0 3px rgba(44,122,77,0.2);
-        }
-
-        .btn {
-            background: #1F4E6E;
-            color: white;
-            border: none;
-            padding: 0.8rem 1.8rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            justify-content: center;
+            border-radius: 2rem;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: #2C7A4D;
-            width: auto;
-            margin-top: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background: #1f5e3a;
-            transform: translateY(-2px);
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 16px -6px rgba(0,0,0,0.15);
-        }
-
-        .output-box {
-            background: #eef3f7;
-            border-radius: 1.5rem;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-break: break-word;
-            font-size: 0.9rem;
-        }
-
-        .trigger-badge {
-            background: #2C7A4D20;
-            color: #2C7A4D;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            justify-content: space-between;
             gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
+        .ai-selector { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .ai-selector select, .ai-selector input {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #cbdde6;
+            font-family: monospace;
+        }
+        .badge-gratis { background: #2C7A4D20; padding: 0.2rem 0.8rem; border-radius: 2rem; font-size: 0.75rem; }
 
-        @media (max-width: 700px) {
-            .grid-2col {
-                grid-template-columns: 1fr;
-            }
-            body {
-                padding: 1rem;
-            }
-        }
+        /* Tab Styles */
+        .tab-container { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; border-bottom: 2px solid #cbdde6; padding-bottom: 0.5rem; flex-wrap: wrap; }
+        .tab-btn { background: transparent; border: none; padding: 0.6rem 1.5rem; font-weight: 600; border-radius: 2rem; cursor: pointer; color: #5f7f8c; }
+        .tab-btn.active { background: #1F4E6E; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        footer {
-            text-align: center;
-            font-size: 0.75rem;
-            margin-top: 2rem;
-            color: #5f7f8c;
-        }
+        /* Cards */
+        .card { background: rgba(255,255,255,0.85); backdrop-filter: blur(2px); border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1); padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.6); }
+        .card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 1.2rem; border-left: 5px solid #2C7A4D; padding-left: 1rem; }
+        textarea { width: 100%; padding: 0.8rem; border-radius: 1rem; border: 1px solid #cbdde6; resize: vertical; font-family: inherit; }
+        .btn { background: #1F4E6E; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 2rem; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-primary { background: #2C7A4D; }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .output-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1rem; margin-top: 1rem; }
+        .output-card { background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .lang-header { font-weight: 700; margin-bottom: 0.5rem; border-left: 3px solid #2C7A4D; padding-left: 0.5rem; }
+        .output-text { background: #fafeff; padding: 0.8rem; border-radius: 0.8rem; white-space: pre-wrap; }
+        .trigger-badge { background: #2C7A4D20; padding: 4px 12px; border-radius: 40px; font-size: 0.75rem; display: inline-block; }
+        .surat-wrapper { display: flex; gap: 20px; flex-wrap: wrap; }
+        .form-container { flex: 1.2; min-width: 260px; background: white; padding: 20px; border-radius: 1.5rem; }
+        .preview-container { flex: 2; display: flex; justify-content: center; overflow-x: auto; }
+        .letter-page { width: 210mm; min-height: 297mm; background: white; padding: 25mm 20mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; position: relative; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120mm; opacity: 0.04; pointer-events: none; }
+        .header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--primary-color, #007BFF); padding-bottom: 15px; margin-bottom: 20px; }
+        .logo-img { height: 50px; object-fit: contain; }
+        .contact-info { text-align: right; font-size: 11px; }
+        .title-surat { text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+        .nomor-surat { text-align: center; font-size: 14px; margin-bottom: 20px; }
+        .footer { border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-size: 11px; margin-top: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border-radius: 12px; border: 1px solid #ccc; }
+        @media print { .global-ai-bar, .tab-container, .form-container, .btn, .hero { display: none; } .preview-container { width: 100%; } .letter-page { box-shadow: none; } }
+        .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="hero">
-        <h1>🧠 AI Sentence Weaver + Fintech Formatter</h1>
-        <p>Rangkai ulang kalimat 3 bahasa dengan AI gratis | Rapikan data perbankan dengan Fintech Mode</p>
+        <h1>🧠 AI Suite</h1>
+        <p>Rewriter 3 Bahasa · Fintech Formatter · Surat Otomatis — Semua Terhubung AI</p>
+    </div>
+
+    <!-- Global AI Configuration -->
+    <div class="global-ai-bar">
+        <div class="ai-selector">
+            <span style="font-weight:600;">🤖 Pilih AI untuk semua fitur:</span>
+            <select id="globalProvider">
+                <option value="pollinations">Pollinations AI (Gratis, No API Key)</option>
+                <option value="githubmodels">GitHub Models (Gratis, No API Key)</option>
+                <option value="groq">Groq (Llama 3.3) - butuh API key</option>
+                <option value="gemini">Google Gemini - butuh API key</option>
+            </select>
+            <input type="password" id="globalApiKey" placeholder="API Key (jika diperlukan)" style="width: 250px;">
+        </div>
+        <div class="badge-gratis" id="globalStatus">✅ Pollinations aktif (gratis unlimited)</div>
     </div>
 
     <!-- Tab Navigation -->
     <div class="tab-container">
         <button class="tab-btn active" data-tab="rewriter">✍️ AI Sentence Rewriter</button>
-        <button class="tab-btn" data-tab="fintech">🏦 Fintech Formatting Mode</button>
+        <button class="tab-btn" data-tab="fintech">🏦 Fintech Formatter (AI + Rule)</button>
+        <button class="tab-btn" data-tab="surat">📄 Surat Otomatis (AI Enhanced)</button>
     </div>
 
-    <!-- ==================== TAB 1: AI SENTENCE REWRITER ==================== -->
+    <!-- TAB 1: REWRITER -->
     <div id="rewriterTab" class="tab-content active">
         <div class="card">
-            <div class="card-title">✍️ Masukkan kalimat asli</div>
-            <textarea id="sourceSentence" rows="3" placeholder="Contoh: Kami ingin meningkatkan kualitas layanan pelanggan melalui pendekatan yang lebih personal dan empatik..."></textarea>
-
-            <!-- Provider Selector (sama seperti sebelumnya, lengkap) -->
-            <div class="provider-selector" style="margin-top: 1rem;">
-                <div class="provider-row" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; justify-content: space-between;">
-                    <div class="provider-group">
-                        <label>🤖 Pilih AI:</label>
-                        <select id="providerSelect">
-                            <optgroup label="🔥 TANPA API KEY (Langsung Pakai)">
-                                <option value="pollinations">Pollinations AI (Gratis Unlimited)</option>
-                                <option value="githubmodels">GitHub Models / Puter.js</option>
-                            </optgroup>
-                            <optgroup label="✨ Dengan API Key (Registrasi Gratis)">
-                                <option value="groq">Groq (Llama 3.3) - 14.400/hari</option>
-                                <option value="openrouter">OpenRouter (65+ Model)</option>
-                                <option value="together">Together AI (25+ Model)</option>
-                                <option value="huggingface">Hugging Face</option>
-                                <option value="gemini">Google Gemini</option>
-                                <option value="mistral">Mistral AI</option>
-                                <option value="cloudflare">Cloudflare Workers AI</option>
-                                <option value="cohere">Cohere</option>
-                                <option value="deepseek">DeepSeek</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <span id="quotaBadge" style="background:#2C7A4D20; padding:4px 12px; border-radius:40px;">✨ Pilih provider</span>
-                </div>
+            <div class="card-title">✍️ Rangkai Ulang Kalimat (3 Bahasa + Psikologi)</div>
+            <textarea id="sourceSentence" rows="3" placeholder="Masukkan kalimat yang ingin dirangkai ulang..."></textarea>
+            <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center;">
+                <label><input type="checkbox" id="psychoToggle"> 🧠 Mode Psikologi (sugesti, persuasi, framing)</label>
+                <button id="rewriteBtn" class="btn">✨ Rangkai Ulang dengan AI ✨</button>
             </div>
-
-            <!-- API Key section -->
-            <div class="api-section" id="apiSection" style="background:#fef9e6; border-radius:1.5rem; padding:0.9rem 1.2rem; margin:1rem 0;">
-                <span style="font-weight:500;" id="apiLabel">🔑 API Key</span>
-                <input type="password" id="apiKeyInput" class="api-input" style="flex:2; min-width:200px;" placeholder="Masukkan API Key Anda...">
-                <div class="warning" id="apiHelp" style="font-size:0.75rem;">💡 Daftar gratis untuk mendapatkan API key</div>
+            <div class="output-grid">
+                <div class="output-card"><div class="lang-header">🇮🇩 Indonesia</div><div class="output-text" id="outputInd">—</div></div>
+                <div class="output-card"><div class="lang-header">🇬🇧 English</div><div class="output-text" id="outputEng">—</div></div>
+                <div class="output-card"><div class="lang-header">🇲🇾 Melayu Malaysia</div><div class="output-text" id="outputMay">—</div></div>
             </div>
-
-            <!-- Mode Psikologi -->
-            <div class="toggle-group" style="display:flex; justify-content:space-between; background:#eef3f7; padding:1rem; border-radius:2rem; margin:1rem 0;">
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <span>🧠 Mode Psikologi (Referensi)</span>
-                    <label class="switch" style="position:relative; display:inline-block; width:52px; height:26px;">
-                        <input type="checkbox" id="psychoToggle" style="opacity:0; width:0; height:0;">
-                        <span class="slider" style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#bbb; border-radius:26px;"></span>
-                    </label>
-                    <span id="modeStatus" style="font-size:0.8rem;">OFF</span>
-                </div>
-                <div style="font-size:0.75rem;">💡 Sugesti, persuasi, framing (referensi psikologi)</div>
-            </div>
-
-            <button id="rewriteBtn" class="btn" style="width:100%;">✨ Rangkai Ulang Kalimat ✨</button>
-
-            <!-- Output Grid 3 bahasa -->
-            <div class="output-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:1rem; margin-top:1.5rem;">
-                <div class="output-card" style="background:white; border-radius:1.5rem; padding:1rem;">
-                    <div class="lang-header">🇮🇩 Indonesia</div>
-                    <div class="output-text" id="outputInd" style="background:#fafeff; padding:0.8rem; border-radius:1rem;">—</div>
-                </div>
-                <div class="output-card" style="background:white; border-radius:1.5rem; padding:1rem;">
-                    <div class="lang-header">🇬🇧 English</div>
-                    <div class="output-text" id="outputEng" style="background:#fafeff; padding:0.8rem; border-radius:1rem;">—</div>
-                </div>
-                <div class="output-card" style="background:white; border-radius:1.5rem; padding:1rem;">
-                    <div class="lang-header">🇲🇾 Melayu Malaysia</div>
-                    <div class="output-text" id="outputMay" style="background:#fafeff; padding:0.8rem; border-radius:1rem;">—</div>
-                </div>
-            </div>
-            <div id="errorMsg" style="color:#c23d22; margin-top:1rem; text-align:center;"></div>
+            <div id="rewriterError" style="color:#c23d22; text-align:center;"></div>
         </div>
     </div>
 
-    <!-- ==================== TAB 2: FINTECH FORMATTING MODE ==================== -->
+    <!-- TAB 2: FINTECH FORMATTER (AI + Rule) -->
     <div id="fintechTab" class="tab-content">
         <div class="card">
-            <div class="card-title">🏦 Fintech Formatting Mode</div>
-            <p style="margin-bottom: 1rem; font-size:0.9rem;">Masukkan teks mentah yang berisi informasi perbankan (bank, nomor rekening, nama pemilik). Sistem akan mendeteksi secara otomatis dan memformat rapi.</p>
-            <textarea id="fintechInput" rows="5" placeholder="Contoh input:
-BCA an. Ahmad Fauzi no rek 1234567890123456
-Bank Mandiri a/n Siti Nurhaliza, Rek: 98765432109876543210
-bri   Rekening 4567891234567890   a.n   Budi Santoso"></textarea>
-            
-            <div style="margin: 1rem 0;">
-                <span class="trigger-badge" id="triggerStatus">🔍 Menunggu deteksi...</span>
-                <button id="formatFintechBtn" class="btn btn-primary" style="margin-left: 1rem;">📄 Format Sekarang</button>
+            <div class="card-title">🏦 Fintech Formatting Mode (AI Enhanced)</div>
+            <textarea id="fintechInput" rows="5" placeholder="Contoh: BCA an. Ahmad Fauzi no rek 1234567890123456&#10;Atau teks acak: Bank Mandiri a/n Siti Nurhaliza, Rek: 98765432109876543210"></textarea>
+            <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+                <button id="fintechRuleBtn" class="btn btn-primary">🔍 Format dengan Rule (Cepat)</button>
+                <button id="fintechAiBtn" class="btn">🧠 Format dengan AI (Pintar)</button>
             </div>
-
-            <div class="card-title" style="margin-top: 0.5rem;">📋 Hasil Format (Output Standar)</div>
-            <div class="output-box" id="fintechOutput">
-                Hasil format akan muncul di sini
-            </div>
-            <p style="font-size:0.7rem; margin-top:1rem; color:#5f7f8c;">✅ Aturan: tidak mengubah data faktual, hapus simbol tidak perlu, Title Case untuk Bank Name & Account Name, Account Number tidak diubah. Output hanya 3 baris sesuai format.</p>
+            <div><span class="trigger-badge" id="triggerStatus">🔍 Deteksi otomatis</span></div>
+            <div class="output-box" id="fintechOutput" style="background: #eef3f7; border-radius: 1rem; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; font-family: monospace;">Hasil akan muncul di sini</div>
         </div>
     </div>
 
-    <footer>⚡ Fintech Mode: trigger jika mengandung kata bank/rekening/account/no rekening atau angka 8-20 digit | AI Rewriter mendukung 11+ provider gratis, termasuk tanpa API key.</footer>
+    <!-- TAB 3: SURAT OTOMATIS (AI Enhanced) -->
+    <div id="suratTab" class="tab-content">
+        <div class="card">
+            <div class="card-title">📄 Generator Surat TK Mall Alliance + AI</div>
+            <div class="surat-wrapper">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label>Upload Logo</label>
+                        <input type="file" id="logoInput" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Surat (Warna)</label>
+                        <select id="jenisSurat">
+                            <option value="#007BFF">Pemberitahuan (Biru)</option>
+                            <option value="#003366">Perintah (Navy)</option>
+                            <option value="#28A745">Tugas (Hijau)</option>
+                            <option value="#8B0000">Peringatan (Merah)</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Judul Surat</label><input type="text" id="inputJudul" value="SURAT TUGAS"></div>
+                    <div class="form-group"><label>Nomor Surat</label><input type="text" id="inputNomor" value="001/TGA/ALLIANCE/2026"></div>
+                    <div class="form-group">
+                        <label>Isi Surat</label>
+                        <textarea id="inputIsi" rows="6">Menimbang: Perlunya kelancaran operasional di lingkungan mall.<br><br>Dasar: Kebijakan kemitraan dengan TikTok.<br><br>MEMBERI TUGAS KEPADA:<br>Nama: Budi Santoso<br>Jabatan: Marketing Ops</textarea>
+                    </div>
+                    <div class="form-group"><label>Kota & Tanggal</label><input type="text" id="inputTanggal" value="Jakarta, 19 Mei 2026"></div>
+                    <div class="form-group"><label>Nama Penandatangan</label><input type="text" id="inputNamaTtd" value="Manajemen Alliance"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button id="aiGenerateSurat" class="btn btn-primary" style="flex:1;">🤖 Generate Isi Surat dengan AI</button>
+                        <button id="optimizeSurat" class="btn" style="flex:1;">✨ Optimasi Gaya Surat (AI)</button>
+                    </div>
+                    <button class="btn-cetak" onclick="window.print()" style="width:100%; margin-top:15px; background:#28a745; color:white; padding:10px; border-radius:2rem; border:none;">🖨️ Cetak / PDF</button>
+                </div>
+                <div class="preview-container">
+                    <div class="letter-page" id="letterPage">
+                        <img id="wmImage" class="watermark" src="" alt="">
+                        <div class="header" id="headerLine">
+                            <div class="logo-area">
+                                <img id="logoPreview" class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='50'%3E%3Crect width='150' height='50' fill='%23ddd'/%3E%3Ctext x='10' y='30' fill='%23666'%3ELogo%3C/text%3E%3C/svg%3E" alt="Logo">
+                                <div class="sub-logo"><span class="bold">Alliance Mall</span> | TikTok Partner</div>
+                            </div>
+                            <div class="contact-info"><strong>TK MALL ALLIANCE</strong><br>Gedung Alliance Mall Lt. 2, Jl. Utama No. 12<br>Email: info@tkmallalliance.com</div>
+                        </div>
+                        <div class="content">
+                            <div class="title-surat" id="viewJudul">SURAT TUGAS</div>
+                            <div class="nomor-surat" id="viewNomor">Nomor: 001/TGA/ALLIANCE/2026</div>
+                            <div id="viewIsi">Menimbang: ...</div>
+                            <div style="margin-top: 50px; display: flex; justify-content: flex-end;">
+                                <div style="text-align: center; width: 200px;">
+                                    <span id="viewTanggal">Jakarta, 19 Mei 2026</span><br>
+                                    <strong>TK Mall Alliance</strong><div style="height: 80px;"></div>
+                                    <span id="viewNamaTtd" style="text-decoration: underline;">Manajemen Alliance</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer">Dokumen Resmi TK Mall Alliance - Kemitraan Strategis TikTok Partner</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    // ==================== GLOBAL UTILITY ====================
-    function updateModeStatus() {
-        const psychoToggle = document.getElementById('psychoToggle');
-        const modeStatus = document.getElementById('modeStatus');
-        if (psychoToggle && modeStatus) {
-            modeStatus.innerText = psychoToggle.checked ? "ON (psikologi aktif)" : "OFF";
+    // ==================== GLOBAL AI FUNCTIONS ====================
+    const providerSelect = document.getElementById('globalProvider');
+    const apiKeyInput = document.getElementById('globalApiKey');
+    const statusSpan = document.getElementById('globalStatus');
+
+    function updateGlobalStatus() {
+        const prov = providerSelect.value;
+        if (prov === 'pollinations') statusSpan.innerHTML = '✅ Pollinations aktif (gratis unlimited)';
+        else if (prov === 'githubmodels') statusSpan.innerHTML = '✅ GitHub Models aktif (gratis unlimited)';
+        else if (prov === 'groq') statusSpan.innerHTML = '🔑 Groq aktif (butuh API key)';
+        else if (prov === 'gemini') statusSpan.innerHTML = '🔑 Gemini aktif (butuh API key)';
+    }
+    providerSelect.addEventListener('change', updateGlobalStatus);
+    updateGlobalStatus();
+
+    // Core AI caller
+    async function callAI(prompt, systemMsg = "Anda adalah asisten profesional. Output format sesuai instruksi.") {
+        const provider = providerSelect.value;
+        let apiKey = apiKeyInput.value.trim();
+        if ((provider === 'groq' || provider === 'gemini') && !apiKey) {
+            throw new Error(`API Key untuk ${provider} diperlukan. Masukkan di panel atas.`);
         }
-    }
-    document.getElementById('psychoToggle')?.addEventListener('change', updateModeStatus);
-    updateModeStatus();
-
-    // Tab switching
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabId = btn.getAttribute('data-tab');
-            tabBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            tabContents.forEach(content => content.classList.remove('active'));
-            if (tabId === 'rewriter') document.getElementById('rewriterTab').classList.add('active');
-            else if (tabId === 'fintech') document.getElementById('fintechTab').classList.add('active');
-        });
-    });
-
-    // ==================== AI REWRITER (Multi-Provider) ====================
-    // (Mengintegrasikan kode sebelumnya secara ringkas, semua fungsi tetap berjalan)
-    // Untuk menghindari duplikasi besar, saya sertakan fungsi-fungsi penting yang sudah ada
-    // Tapi karena kode ini final, saya akan pastikan semua handler AI rewriter bekerja dengan polling/groq dll.
-    // Silakan lihat di bagian bawah script untuk event listener Rewrite.
-    
-    // Data dummy untuk AI rewriter (sebenarnya fungsi asli akan dijalankan)
-    // Karena sebelumnya sudah ada, saya akan copy fungsi dari solusi sebelumnya dengan 11 provider.
-    // Saya akan tulis ulang secara efisien: semua fungsi call provider ada di bawah.
-    
-    const psychContextList = `- Hipnosis & Sugesti\n- Suggestion & Autosuggestion\n- Persuasion & Cognitive Bias\n- Conditioning & Habit Formation\n- Social Influence & Conformity\n- Emotional Attachment & Trauma Bonding\n- Media Framing & Propaganda\n- Addiction Psychology & Reward System`;
-    
-    function buildPrompt(originalText, isPsychoOn) {
-        let base = `Anda adalah AI perangkai kalimat profesional. Tugas: rangkai ulang kalimat berikut menjadi 3 versi dalam tiga bahasa: 
-1. Bahasa Indonesia (formal baku)
-2. English (formal, professional)
-3. Bahasa Melayu Malaysia (standard formal Malaysia)
-
-Aturan ketat:
-- Setiap versi HARUS diawali dengan sapaan: "Pengguna yang terhormat,"
-- Setiap versi HARUS diakhiri dengan: "terima kasih."
-- Gaya formal, baku, profesional.
-
-Kalimat asli: """${originalText}"""`;
-        if (isPsychoOn) base += `\n\n[REFERENSI PSIKOLOGI - MODE ON]\nGunakan referensi konsep psikologi berikut untuk memperkaya pilihan kata: ${psychContextList}\nImplementasikan secara subtil.`;
-        else base += `\n\n[REFERENSI PSIKOLOGI - MODE OFF]\nJangan gunakan konsep psikologi apapun.`;
-        base += `\n\nOutput wajib JSON murni: {\"indonesia\":\"...\",\"inggris\":\"...\",\"melayu\":\"...\"}`;
-        return base;
-    }
-
-    // Provider calls (ringkasan, sama seperti kode sebelumnya tapi saya singkat agar tidak terlalu panjang, namun tetap fungsional)
-    async function callProvider(provider, prompt, apiKey) {
-        // mapping sederhana, untuk demo ini saya gunakan polling/groq/gemini/hf sebagai contoh agar ringan
+        const messages = [
+            { role: 'system', content: systemMsg },
+            { role: 'user', content: prompt }
+        ];
         if (provider === 'pollinations') {
             const res = await fetch('https://text.pollinations.ai/', {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({messages:[{role:'user',content:prompt+'\nOutput JSON only'}], model:'openai'})
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages, model: 'openai' })
             });
-            let text = await res.text();
-            let jsonMatch = text.match(/\{[\s\S]*\}/);
-            return JSON.parse(jsonMatch[0]);
+            const text = await res.text();
+            return text;
         } else if (provider === 'githubmodels') {
             const res = await fetch('https://js.puter.com/v2/chat/completions', {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({model:'gpt-3.5-turbo', messages:[{role:'user',content:prompt}]})
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: 'gpt-3.5-turbo', messages })
             });
             const data = await res.json();
-            let content = data.choices[0].message.content;
-            let jsonMatch = content.match(/\{[\s\S]*\}/);
-            return JSON.parse(jsonMatch[0]);
+            return data.choices[0].message.content;
         } else if (provider === 'groq') {
             const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method:'POST', headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
-                body:JSON.stringify({model:'llama-3.3-70b-versatile', messages:[{role:'user',content:prompt}], response_format:{type:'json_object'}})
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
             });
             const data = await res.json();
-            return JSON.parse(data.choices[0].message.content);
+            return data.choices[0].message.content;
         } else if (provider === 'gemini') {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
-            const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+            const res = await fetch(url, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
             const data = await res.json();
-            let text = data.candidates[0].content.parts[0].text;
-            let jsonMatch = text.match(/\{[\s\S]*\}/);
-            return JSON.parse(jsonMatch[0]);
+            return data.candidates[0].content.parts[0].text;
         } else {
-            // fallback ke polling gratis
-            const res = await fetch('https://text.pollinations.ai/', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({messages:[{role:'user',content:prompt}], model:'openai'})});
-            let text = await res.text();
-            let jsonMatch = text.match(/\{[\s\S]*\}/);
-            return JSON.parse(jsonMatch[0]);
+            throw new Error('Provider tidak didukung');
         }
     }
 
-    // Event listener untuk tombol rewrite
-    const rewriteBtn = document.getElementById('rewriteBtn');
-    const sourceSentence = document.getElementById('sourceSentence');
-    const outputInd = document.getElementById('outputInd');
-    const outputEng = document.getElementById('outputEng');
-    const outputMay = document.getElementById('outputMay');
-    const errorMsg = document.getElementById('errorMsg');
-    const providerSelect = document.getElementById('providerSelect');
-    const apiKeyInput = document.getElementById('apiKeyInput');
-    
-    async function handleRewrite() {
-        const text = sourceSentence.value.trim();
-        if (!text) { errorMsg.innerText = "Masukkan kalimat."; return; }
-        const provider = providerSelect.value;
-        let apiKey = '';
-        if (['groq','gemini','openrouter','together','huggingface','mistral','cloudflare','cohere','deepseek'].includes(provider)) {
-            apiKey = apiKeyInput.value.trim();
-            if (!apiKey) { errorMsg.innerText = `Masukkan API Key untuk ${provider}`; return; }
-        }
-        errorMsg.innerText = '';
-        rewriteBtn.disabled = true;
-        rewriteBtn.innerHTML = `<span class="loader" style="display:inline-block; width:18px; height:18px; border:2px solid white; border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite;"></span> Memproses...`;
-        const isPsycho = document.getElementById('psychoToggle').checked;
-        const prompt = buildPrompt(text, isPsycho);
+    // ==================== TAB 1: REWRITER ====================
+    async function rewriteSentence() {
+        const text = document.getElementById('sourceSentence').value.trim();
+        if (!text) { document.getElementById('rewriterError').innerText = 'Masukkan kalimat.'; return; }
+        const psycho = document.getElementById('psychoToggle').checked;
+        const prompt = `Rangkai ulang kalimat berikut ke dalam 3 versi bahasa: Indonesia, Inggris, Melayu Malaysia. Setiap versi harus diawali "Pengguna yang terhormat," dan diakhiri "terima kasih." Gaya formal, baku, profesional. ${psycho ? 'Gunakan referensi psikologi (sugesti, persuasi, framing, conditioning) untuk memberikan nuansa mendalam.' : 'Jangan gunakan psikologi.'} Kalimat: "${text}". Output hanya JSON: {"indonesia":"...","inggris":"...","melayu":"..."}`;
+        const btn = document.getElementById('rewriteBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Memproses AI...';
         try {
-            const result = await callProvider(provider, prompt, apiKey);
-            if (result.indonesia && result.inggris && result.melayu) {
-                outputInd.innerText = result.indonesia;
-                outputEng.innerText = result.inggris;
-                outputMay.innerText = result.melayu;
-                errorMsg.innerText = "✅ Berhasil.";
-            } else throw new Error("Format JSON tidak lengkap");
+            const response = await callAI(prompt, "Output hanya JSON valid tanpa teks lain.");
+            let jsonMatch = response.match(/\{[\s\S]*\}/);
+            if (!jsonMatch) throw new Error('Response bukan JSON');
+            const data = JSON.parse(jsonMatch[0]);
+            document.getElementById('outputInd').innerText = data.indonesia || 'Error';
+            document.getElementById('outputEng').innerText = data.inggris || 'Error';
+            document.getElementById('outputMay').innerText = data.melayu || 'Error';
+            document.getElementById('rewriterError').innerText = '✅ Berhasil.';
         } catch(e) {
-            errorMsg.innerText = "Gagal: "+e.message;
-            outputInd.innerText = "Error";
-            outputEng.innerText = "Error";
-            outputMay.innerText = "Error";
+            document.getElementById('rewriterError').innerText = 'Gagal: '+e.message;
         } finally {
-            rewriteBtn.disabled = false;
-            rewriteBtn.innerHTML = "✨ Rangkai Ulang Kalimat ✨";
+            btn.disabled = false; btn.innerHTML = '✨ Rangkai Ulang dengan AI ✨';
         }
     }
-    rewriteBtn.addEventListener('click', handleRewrite);
+    document.getElementById('rewriteBtn').addEventListener('click', rewriteSentence);
 
-    // UI provider helper (sederhana)
-    function updateApiSectionVisibility() {
-        const provider = providerSelect.value;
-        const needsKey = ['groq','gemini','openrouter','together','huggingface','mistral','cloudflare','cohere','deepseek'].includes(provider);
-        document.getElementById('apiSection').style.display = needsKey ? 'flex' : 'none';
-        const quotaBadge = document.getElementById('quotaBadge');
-        if (provider === 'pollinations') quotaBadge.innerText = '✨ Unlimited - No API Key';
-        else if (provider === 'githubmodels') quotaBadge.innerText = '✨ Unlimited via Puter';
-        else quotaBadge.innerText = '🔑 Butuh API Key (gratis daftar)';
+    // ==================== TAB 2: FINTECH (AI + RULE) ====================
+    // Rule-based version
+    function formatFintechRule(raw) {
+        let cleaned = raw.replace(/[•\-–—*_]/g, ' ').replace(/\s+/g, ' ').trim();
+        let accountNumber = (cleaned.match(/\b(\d{8,20})\b/) || [])[1] || 'Tidak ditemukan';
+        let bankMatch = cleaned.match(/(bank\s+(\w+)|bca|mandiri|bri|bni|cimb|danamon|permata|maybank|muamalat|bsi|btn)/i);
+        let bankName = bankMatch ? bankMatch[0].replace(/^bank\s+/i,'') : 'Tidak terdeteksi';
+        bankName = bankName.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+        let nameMatch = cleaned.match(/(a\/n|a\.n|an\.|atas nama)[\s:]+([A-Za-z\s\.]+?)(?=\s*(?:no|rek|$|\d))/i);
+        let accountName = nameMatch ? nameMatch[2].trim().replace(/\s+/g,' ').split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ') : 'Tidak terdeteksi';
+        return `BANK NAME: ${bankName}\nACCOUNT NAME: ${accountName}\nACCOUNT NUMBER: ${accountNumber}`;
     }
-    providerSelect.addEventListener('change', updateApiSectionVisibility);
-    updateApiSectionVisibility();
-    
-    // Simpan API key sederhana
-    apiKeyInput.addEventListener('change', () => {
-        localStorage.setItem(`${providerSelect.value}_apikey`, apiKeyInput.value);
+    async function formatFintechAI() {
+        const raw = document.getElementById('fintechInput').value;
+        if (!raw.trim()) { document.getElementById('fintechOutput').innerText = 'Masukkan data.'; return; }
+        const prompt = `Ekstrak informasi perbankan dari teks berikut. Output hanya tiga baris: BANK NAME: [nama bank], ACCOUNT NAME: [nama pemilik], ACCOUNT NUMBER: [nomor rekening]. Jangan tambahkan teks lain. Gunakan Title Case untuk nama. Teks: "${raw}"`;
+        const btn = document.getElementById('fintechAiBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>AI memproses...';
+        try {
+            const result = await callAI(prompt, "Anda adalah ekstraktor data perbankan yang akurat.");
+            let lines = result.split('\n').slice(0,3).join('\n');
+            document.getElementById('fintechOutput').innerText = lines;
+        } catch(e) {
+            document.getElementById('fintechOutput').innerText = 'Error AI: ' + e.message + '\nMenggunakan rule fallback:\n' + formatFintechRule(raw);
+        } finally {
+            btn.disabled = false; btn.innerHTML = '🧠 Format dengan AI (Pintar)';
+        }
+    }
+    document.getElementById('fintechRuleBtn').addEventListener('click', () => {
+        const raw = document.getElementById('fintechInput').value;
+        if (!raw.trim()) { document.getElementById('fintechOutput').innerText = 'Masukkan data.'; return; }
+        document.getElementById('fintechOutput').innerText = formatFintechRule(raw);
     });
-    (function loadKeys() {
-        const provider = providerSelect.value;
-        const saved = localStorage.getItem(`${provider}_apikey`);
-        if (saved) apiKeyInput.value = saved;
-    })();
-
-    // ==================== FINTECH FORMATTING MODE ====================
-    const fintechInput = document.getElementById('fintechInput');
-    const triggerStatus = document.getElementById('triggerStatus');
-    const formatBtn = document.getElementById('formatFintechBtn');
-    const fintechOutput = document.getElementById('fintechOutput');
-
-    // Fungsi deteksi trigger
-    function detectTrigger(text) {
-        const lower = text.toLowerCase();
-        const bankKeywords = /\b(bank|rekening|account|no rekening|a\/n|a.n|an\.|atas nama)\b/i.test(lower);
-        const numberPattern = /\b\d{8,20}\b/;
-        const hasNumber = numberPattern.test(text);
-        return bankKeywords || hasNumber;
-    }
-
-    // Fungsi ekstraksi data perbankan (rule-based, tidak mengubah data faktual)
-    function extractBankInfo(rawText) {
-        // Bersihkan dari karakter aneh, tapi tidak merubah nomor
-        let cleaned = rawText.replace(/\r\n/g, '\n').replace(/[•\-—–_*]/g, ' ').replace(/\s+/g, ' ').trim();
-        // Cari nomor rekening (8-20 digit)
-        let accountNumber = '';
-        const numMatch = cleaned.match(/\b(\d{8,20})\b/);
-        if (numMatch) accountNumber = numMatch[1];
-        else accountNumber = 'Tidak ditemukan';
-        
-        // Cari nama bank (ambil kata sebelum nomor atau keyword bank)
-        let bankName = '';
-        const bankPattern = /(bank\s+(\w+)|bca|mandiri|bri|bni|cimb|danamon|permata|maybank|muamalat|bsi|btn)/i;
-        const bankMatch = cleaned.match(bankPattern);
-        if (bankMatch) {
-            let rawBank = bankMatch[0];
-            bankName = rawBank.replace(/^bank\s+/i, '').trim();
-            // Title case
-            bankName = bankName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-        } else {
-            bankName = 'Tidak terdeteksi';
-        }
-        
-        // Cari nama akun (setelah a/n, a.n, an., atas nama)
-        let accountName = '';
-        const namePattern = /(a\/n|a\.n|an\.|atas nama)[\s:]+([A-Za-z\s\.]+?)(?=\s*(?:no|rek|$|\d))/i;
-        const nameMatch = cleaned.match(namePattern);
-        if (nameMatch && nameMatch[2]) {
-            let rawName = nameMatch[2].trim();
-            // Title case
-            accountName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-        } else {
-            // jika tidak ada, coba ambil kata setelah keyword "an" atau dari token terakhir sebelum nomor
-            const fallback = cleaned.match(/(?:an\.?|a\/n)\s+([A-Za-z\s]+)/i);
-            if (fallback) accountName = fallback[1].trim().replace(/\s+/g,' ').split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
-            else accountName = 'Tidak terdeteksi';
-        }
-        return { bankName, accountName, accountNumber };
-    }
-
-    function formatFintech() {
-        const raw = fintechInput.value;
-        if (!raw.trim()) {
-            triggerStatus.innerHTML = '⚠️ Masukkan teks terlebih dahulu';
-            fintechOutput.innerText = 'Silakan masukkan data perbankan.';
-            return;
-        }
-        const triggered = detectTrigger(raw);
-        if (!triggered) {
-            triggerStatus.innerHTML = '❌ Tidak terdeteksi kata bank/rekening atau nomor rekening (8-20 digit)';
-            fintechOutput.innerText = 'Tidak memenuhi trigger. Pastikan mengandung kata bank/rekening/account/no rekening atau angka 8-20 digit.';
-            return;
-        }
-        triggerStatus.innerHTML = '✅ Trigger terdeteksi! Memformat...';
-        const { bankName, accountName, accountNumber } = extractBankInfo(raw);
-        const output = `BANK NAME: ${bankName}\nACCOUNT NAME: ${accountName}\nACCOUNT NUMBER: ${accountNumber}`;
-        fintechOutput.innerText = output;
-    }
-
-    formatBtn.addEventListener('click', formatFintech);
-    fintechInput.addEventListener('input', () => {
-        const text = fintechInput.value;
-        if (detectTrigger(text)) triggerStatus.innerHTML = '✅ Trigger aktif (bank/rekening/angka rekening)';
-        else triggerStatus.innerHTML = '🔍 Belum terdeteksi (perlu kata bank/rekening/account atau nomor 8-20 digit)';
+    document.getElementById('fintechAiBtn').addEventListener('click', formatFintechAI);
+    // Trigger detection (rule-based only for info)
+    function detectTrigger(t) { return /\b(bank|rekening|account|no rekening|a\/n)\b/i.test(t) || /\b\d{8,20}\b/.test(t); }
+    document.getElementById('fintechInput').addEventListener('input', function() {
+        const status = detectTrigger(this.value) ? '✅ Trigger terdeteksi (bank/rekening/angka)' : '🔍 Tidak terdeteksi';
+        document.getElementById('triggerStatus').innerText = status;
     });
-    // Contoh default isi demo
-    if (!fintechInput.value) {
-        fintechInput.value = "BCA an. Ahmad Fauzi no rek 1234567890123456\nBank Mandiri a/n Siti Nurhaliza, Rek: 98765432109876543210";
+
+    // ==================== TAB 3: SURAT OTOMATIS (AI Enhanced) ====================
+    // Render surat manual
+    function renderSurat() {
+        document.getElementById('viewJudul').innerText = document.getElementById('inputJudul').value;
+        document.getElementById('viewNomor').innerText = "Nomor: " + document.getElementById('inputNomor').value;
+        let isi = document.getElementById('inputIsi').value;
+        document.getElementById('viewIsi').innerHTML = isi.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&lt;br&gt;/gi, '<br>');
+        document.getElementById('viewTanggal').innerText = document.getElementById('inputTanggal').value;
+        document.getElementById('viewNamaTtd').innerText = document.getElementById('inputNamaTtd').value;
     }
-    triggerStatus.innerHTML = '🔍 Menunggu deteksi...';
+    function updateWarna() {
+        const warna = document.getElementById('jenisSurat').value;
+        document.documentElement.style.setProperty('--primary-color', warna);
+        document.getElementById('headerLine').style.borderBottomColor = warna;
+    }
+    document.getElementById('inputJudul').addEventListener('input', renderSurat);
+    document.getElementById('inputNomor').addEventListener('input', renderSurat);
+    document.getElementById('inputIsi').addEventListener('input', renderSurat);
+    document.getElementById('inputTanggal').addEventListener('input', renderSurat);
+    document.getElementById('inputNamaTtd').addEventListener('input', renderSurat);
+    document.getElementById('jenisSurat').addEventListener('change', updateWarna);
+    renderSurat(); updateWarna();
+
+    // Logo upload
+    const logoInput = document.getElementById('logoInput');
+    logoInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                document.getElementById('logoPreview').src = ev.target.result;
+                document.getElementById('wmImage').src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // AI Generate Isi Surat
+    async function generateSuratWithAI() {
+        const prompt = `Buatkan isi surat resmi untuk "TK Mall Alliance" dengan topik umum kemitraan atau tugas. Gunakan format surat dinas yang rapi, paragraf jelas, dengan salam pembuka dan penutup. Jangan sertakan kop surat atau tanda tangan. Hasilkan hanya teks isi surat, menggunakan <br> untuk baris baru.`;
+        const btn = document.getElementById('aiGenerateSurat');
+        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Menulis surat...';
+        try {
+            const result = await callAI(prompt, "Anda penulis surat profesional.");
+            document.getElementById('inputIsi').value = result.replace(/\n/g, '<br>');
+            renderSurat();
+        } catch(e) {
+            alert('Gagal generate: '+e.message);
+        } finally {
+            btn.disabled = false; btn.innerHTML = '🤖 Generate Isi Surat dengan AI';
+        }
+    }
+    async function optimizeSuratGaya() {
+        const currentIsi = document.getElementById('inputIsi').value;
+        if (!currentIsi.trim()) { alert('Isi surat kosong.'); return; }
+        const prompt = `Perbaiki gaya surat berikut menjadi lebih formal, baku, dan profesional. Perbaiki ejaan dan tata bahasa. Jangan ubah fakta penting. Output hanya teks surat yang sudah dioptimasi, gunakan <br> untuk baris baru. Teks: ${currentIsi}`;
+        const btn = document.getElementById('optimizeSurat');
+        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Mengoptimasi...';
+        try {
+            const result = await callAI(prompt, "Anda ahli bahasa Indonesia formal.");
+            document.getElementById('inputIsi').value = result.replace(/\n/g, '<br>');
+            renderSurat();
+        } catch(e) {
+            alert('Gagal optimasi: '+e.message);
+        } finally {
+            btn.disabled = false; btn.innerHTML = '✨ Optimasi Gaya Surat (AI)';
+        }
+    }
+    document.getElementById('aiGenerateSurat').addEventListener('click', generateSuratWithAI);
+    document.getElementById('optimizeSurat').addEventListener('click', optimizeSuratGaya);
+
+    // Inisialisasi default contoh untuk rewriter
+    if (!document.getElementById('sourceSentence').value) {
+        document.getElementById('sourceSentence').value = "Dengan adanya inovasi teknologi, kita harus beradaptasi secara cepat agar tidak tertinggal dari kompetitor global.";
+    }
+    // Watermark default logo
+    if (!document.getElementById('logoPreview').src.includes('data:')) {
+        document.getElementById('wmImage').src = document.getElementById('logoPreview').src;
+    }
 </script>
 </body>
 </html>
