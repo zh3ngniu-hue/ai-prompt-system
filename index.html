@@ -3,410 +3,523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AI Suite · Rewriter · Fintech · Surat Otomatis</title>
+    <title>AI Suite Pro · React + Tailwind + Three.js</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Framer Motion CDN (UMD) -->
+    <script src="https://unpkg.com/framer-motion@11.0.2/dist/framer-motion.js"></script>
+    <!-- Three.js CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.164.1/build/three.module.js"
+            }
+        }
+    </script>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <!-- Babel Standalone (untuk JSX) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons (optional) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            padding: 2rem 1.5rem;
-            color: #1a2c3e;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .hero { text-align: center; margin-bottom: 2rem; }
-        .hero h1 { font-size: 2rem; background: linear-gradient(135deg, #1F4E6E, #2C7A4D); background-clip: text; -webkit-background-clip: text; color: transparent; }
-        .hero p { color: #2c5a6e; margin-top: 0.5rem; }
-
-        /* AI Global Controls */
-        .global-ai-bar {
-            background: white;
-            border-radius: 2rem;
-            padding: 0.8rem 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .ai-selector { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-        .ai-selector select, .ai-selector input {
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid #cbdde6;
-            font-family: monospace;
-        }
-        .badge-gratis { background: #2C7A4D20; padding: 0.2rem 0.8rem; border-radius: 2rem; font-size: 0.75rem; }
-
-        /* Tab Styles */
-        .tab-container { display: flex; gap: 0.8rem; margin-bottom: 1.5rem; border-bottom: 2px solid #cbdde6; padding-bottom: 0.5rem; flex-wrap: wrap; }
-        .tab-btn { background: transparent; border: none; padding: 0.6rem 1.5rem; font-weight: 600; border-radius: 2rem; cursor: pointer; color: #5f7f8c; }
-        .tab-btn.active { background: #1F4E6E; color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        /* Cards */
-        .card { background: rgba(255,255,255,0.85); backdrop-filter: blur(2px); border-radius: 2rem; box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1); padding: 1.8rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.6); }
-        .card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 1.2rem; border-left: 5px solid #2C7A4D; padding-left: 1rem; }
-        textarea { width: 100%; padding: 0.8rem; border-radius: 1rem; border: 1px solid #cbdde6; resize: vertical; font-family: inherit; }
-        .btn { background: #1F4E6E; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 2rem; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-primary { background: #2C7A4D; }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.05); }
-        .output-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1rem; margin-top: 1rem; }
-        .output-card { background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
-        .lang-header { font-weight: 700; margin-bottom: 0.5rem; border-left: 3px solid #2C7A4D; padding-left: 0.5rem; }
-        .output-text { background: #fafeff; padding: 0.8rem; border-radius: 0.8rem; white-space: pre-wrap; }
-        .trigger-badge { background: #2C7A4D20; padding: 4px 12px; border-radius: 40px; font-size: 0.75rem; display: inline-block; }
-        .surat-wrapper { display: flex; gap: 20px; flex-wrap: wrap; }
-        .form-container { flex: 1.2; min-width: 260px; background: white; padding: 20px; border-radius: 1.5rem; }
-        .preview-container { flex: 2; display: flex; justify-content: center; overflow-x: auto; }
-        .letter-page { width: 210mm; min-height: 297mm; background: white; padding: 25mm 20mm; box-shadow: 0 4px 10px rgba(0,0,0,0.15); box-sizing: border-box; position: relative; }
-        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120mm; opacity: 0.04; pointer-events: none; }
-        .header { display: flex; justify-content: space-between; border-bottom: 3px solid var(--primary-color, #007BFF); padding-bottom: 15px; margin-bottom: 20px; }
-        .logo-img { height: 50px; object-fit: contain; }
-        .contact-info { text-align: right; font-size: 11px; }
-        .title-surat { text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
-        .nomor-surat { text-align: center; font-size: 14px; margin-bottom: 20px; }
-        .footer { border-top: 1px solid #ccc; padding-top: 10px; text-align: center; font-size: 11px; margin-top: 30px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border-radius: 12px; border: 1px solid #ccc; }
-        @media print { .global-ai-bar, .tab-container, .form-container, .btn, .hero { display: none; } .preview-container { width: 100%; } .letter-page { box-shadow: none; } }
-        .loader { display: inline-block; width: 18px; height: 18px; border: 2px solid white; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-track { background: #2d2d2d; }
+        .dark ::-webkit-scrollbar-thumb { background: #555; }
+        /* Toast animation */
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { animation: slideIn 0.3s ease-out; }
+        /* Surat preview style */
+        .letter-page { width: 210mm; min-height: 297mm; background: white; color: black; padding: 20mm; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); margin: 0 auto; }
+        .watermark-img { position: absolute; opacity: 0.05; width: 80%; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+        @media print { .no-print { display: none; } .letter-page { box-shadow: none; margin: 0; padding: 0; } }
     </style>
 </head>
-<body>
-<div class="container">
-    <div class="hero">
-        <h1>🧠 AI Suite</h1>
-        <p>Rewriter 3 Bahasa · Fintech Formatter · Surat Otomatis — Semua Terhubung AI</p>
-    </div>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div id="root"></div>
 
-    <!-- Global AI Configuration -->
-    <div class="global-ai-bar">
-        <div class="ai-selector">
-            <span style="font-weight:600;">🤖 Pilih AI untuk semua fitur:</span>
-            <select id="globalProvider">
-                <option value="pollinations">Pollinations AI (Gratis, No API Key)</option>
-                <option value="githubmodels">GitHub Models (Gratis, No API Key)</option>
-                <option value="groq">Groq (Llama 3.3) - butuh API key</option>
-                <option value="gemini">Google Gemini - butuh API key</option>
-            </select>
-            <input type="password" id="globalApiKey" placeholder="API Key (jika diperlukan)" style="width: 250px;">
-        </div>
-        <div class="badge-gratis" id="globalStatus">✅ Pollinations aktif (gratis unlimited)</div>
-    </div>
-
-    <!-- Tab Navigation -->
-    <div class="tab-container">
-        <button class="tab-btn active" data-tab="rewriter">✍️ AI Sentence Rewriter</button>
-        <button class="tab-btn" data-tab="fintech">🏦 Fintech Formatter (AI + Rule)</button>
-        <button class="tab-btn" data-tab="surat">📄 Surat Otomatis (AI Enhanced)</button>
-    </div>
-
-    <!-- TAB 1: REWRITER -->
-    <div id="rewriterTab" class="tab-content active">
-        <div class="card">
-            <div class="card-title">✍️ Rangkai Ulang Kalimat (3 Bahasa + Psikologi)</div>
-            <textarea id="sourceSentence" rows="3" placeholder="Masukkan kalimat yang ingin dirangkai ulang..."></textarea>
-            <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center;">
-                <label><input type="checkbox" id="psychoToggle"> 🧠 Mode Psikologi (sugesti, persuasi, framing)</label>
-                <button id="rewriteBtn" class="btn">✨ Rangkai Ulang dengan AI ✨</button>
-            </div>
-            <div class="output-grid">
-                <div class="output-card"><div class="lang-header">🇮🇩 Indonesia</div><div class="output-text" id="outputInd">—</div></div>
-                <div class="output-card"><div class="lang-header">🇬🇧 English</div><div class="output-text" id="outputEng">—</div></div>
-                <div class="output-card"><div class="lang-header">🇲🇾 Melayu Malaysia</div><div class="output-text" id="outputMay">—</div></div>
-            </div>
-            <div id="rewriterError" style="color:#c23d22; text-align:center;"></div>
-        </div>
-    </div>
-
-    <!-- TAB 2: FINTECH FORMATTER (AI + Rule) -->
-    <div id="fintechTab" class="tab-content">
-        <div class="card">
-            <div class="card-title">🏦 Fintech Formatting Mode (AI Enhanced)</div>
-            <textarea id="fintechInput" rows="5" placeholder="Contoh: BCA an. Ahmad Fauzi no rek 1234567890123456&#10;Atau teks acak: Bank Mandiri a/n Siti Nurhaliza, Rek: 98765432109876543210"></textarea>
-            <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
-                <button id="fintechRuleBtn" class="btn btn-primary">🔍 Format dengan Rule (Cepat)</button>
-                <button id="fintechAiBtn" class="btn">🧠 Format dengan AI (Pintar)</button>
-            </div>
-            <div><span class="trigger-badge" id="triggerStatus">🔍 Deteksi otomatis</span></div>
-            <div class="output-box" id="fintechOutput" style="background: #eef3f7; border-radius: 1rem; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; font-family: monospace;">Hasil akan muncul di sini</div>
-        </div>
-    </div>
-
-    <!-- TAB 3: SURAT OTOMATIS (AI Enhanced) -->
-    <div id="suratTab" class="tab-content">
-        <div class="card">
-            <div class="card-title">📄 Generator Surat TK Mall Alliance + AI</div>
-            <div class="surat-wrapper">
-                <div class="form-container">
-                    <div class="form-group">
-                        <label>Upload Logo</label>
-                        <input type="file" id="logoInput" accept="image/*">
-                    </div>
-                    <div class="form-group">
-                        <label>Jenis Surat (Warna)</label>
-                        <select id="jenisSurat">
-                            <option value="#007BFF">Pemberitahuan (Biru)</option>
-                            <option value="#003366">Perintah (Navy)</option>
-                            <option value="#28A745">Tugas (Hijau)</option>
-                            <option value="#8B0000">Peringatan (Merah)</option>
-                        </select>
-                    </div>
-                    <div class="form-group"><label>Judul Surat</label><input type="text" id="inputJudul" value="SURAT TUGAS"></div>
-                    <div class="form-group"><label>Nomor Surat</label><input type="text" id="inputNomor" value="001/TGA/ALLIANCE/2026"></div>
-                    <div class="form-group">
-                        <label>Isi Surat</label>
-                        <textarea id="inputIsi" rows="6">Menimbang: Perlunya kelancaran operasional di lingkungan mall.<br><br>Dasar: Kebijakan kemitraan dengan TikTok.<br><br>MEMBERI TUGAS KEPADA:<br>Nama: Budi Santoso<br>Jabatan: Marketing Ops</textarea>
-                    </div>
-                    <div class="form-group"><label>Kota & Tanggal</label><input type="text" id="inputTanggal" value="Jakarta, 19 Mei 2026"></div>
-                    <div class="form-group"><label>Nama Penandatangan</label><input type="text" id="inputNamaTtd" value="Manajemen Alliance"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <button id="aiGenerateSurat" class="btn btn-primary" style="flex:1;">🤖 Generate Isi Surat dengan AI</button>
-                        <button id="optimizeSurat" class="btn" style="flex:1;">✨ Optimasi Gaya Surat (AI)</button>
-                    </div>
-                    <button class="btn-cetak" onclick="window.print()" style="width:100%; margin-top:15px; background:#28a745; color:white; padding:10px; border-radius:2rem; border:none;">🖨️ Cetak / PDF</button>
-                </div>
-                <div class="preview-container">
-                    <div class="letter-page" id="letterPage">
-                        <img id="wmImage" class="watermark" src="" alt="">
-                        <div class="header" id="headerLine">
-                            <div class="logo-area">
-                                <img id="logoPreview" class="logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='50'%3E%3Crect width='150' height='50' fill='%23ddd'/%3E%3Ctext x='10' y='30' fill='%23666'%3ELogo%3C/text%3E%3C/svg%3E" alt="Logo">
-                                <div class="sub-logo"><span class="bold">Alliance Mall</span> | TikTok Partner</div>
-                            </div>
-                            <div class="contact-info"><strong>TK MALL ALLIANCE</strong><br>Gedung Alliance Mall Lt. 2, Jl. Utama No. 12<br>Email: info@tkmallalliance.com</div>
-                        </div>
-                        <div class="content">
-                            <div class="title-surat" id="viewJudul">SURAT TUGAS</div>
-                            <div class="nomor-surat" id="viewNomor">Nomor: 001/TGA/ALLIANCE/2026</div>
-                            <div id="viewIsi">Menimbang: ...</div>
-                            <div style="margin-top: 50px; display: flex; justify-content: flex-end;">
-                                <div style="text-align: center; width: 200px;">
-                                    <span id="viewTanggal">Jakarta, 19 Mei 2026</span><br>
-                                    <strong>TK Mall Alliance</strong><div style="height: 80px;"></div>
-                                    <span id="viewNamaTtd" style="text-decoration: underline;">Manajemen Alliance</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="footer">Dokumen Resmi TK Mall Alliance - Kemitraan Strategis TikTok Partner</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // ==================== GLOBAL AI FUNCTIONS ====================
-    const providerSelect = document.getElementById('globalProvider');
-    const apiKeyInput = document.getElementById('globalApiKey');
-    const statusSpan = document.getElementById('globalStatus');
-
-    function updateGlobalStatus() {
-        const prov = providerSelect.value;
-        if (prov === 'pollinations') statusSpan.innerHTML = '✅ Pollinations aktif (gratis unlimited)';
-        else if (prov === 'githubmodels') statusSpan.innerHTML = '✅ GitHub Models aktif (gratis unlimited)';
-        else if (prov === 'groq') statusSpan.innerHTML = '🔑 Groq aktif (butuh API key)';
-        else if (prov === 'gemini') statusSpan.innerHTML = '🔑 Gemini aktif (butuh API key)';
-    }
-    providerSelect.addEventListener('change', updateGlobalStatus);
-    updateGlobalStatus();
-
-    // Core AI caller
-    async function callAI(prompt, systemMsg = "Anda adalah asisten profesional. Output format sesuai instruksi.") {
-        const provider = providerSelect.value;
-        let apiKey = apiKeyInput.value.trim();
-        if ((provider === 'groq' || provider === 'gemini') && !apiKey) {
-            throw new Error(`API Key untuk ${provider} diperlukan. Masukkan di panel atas.`);
+    <script type="text/babel" data-type="module">
+        // === React & ReactDOM dari global ===
+        const { useState, useEffect, useRef, useCallback, createElement } = React;
+        const { createRoot } = ReactDOM;
+        
+        // === Import Three.js dari module ===
+        import * as THREE from 'three';
+        
+        // === Helper: cn untuk conditional className ===
+        function cn(...classes) { return classes.filter(Boolean).join(' '); }
+        
+        // === Custom Hooks ===
+        function useAI() {
+            const callAI = useCallback(async (prompt, systemMsg = "Anda asisten profesional.") => {
+                const provider = document.getElementById('globalProvider')?.value || 'pollinations';
+                let apiKey = document.getElementById('globalApiKey')?.value.trim() || '';
+                if ((provider === 'groq' || provider === 'gemini') && !apiKey) {
+                    throw new Error(`API Key untuk ${provider} diperlukan`);
+                }
+                const messages = [
+                    { role: 'system', content: systemMsg },
+                    { role: 'user', content: prompt }
+                ];
+                if (provider === 'pollinations') {
+                    const res = await fetch('https://text.pollinations.ai/', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messages, model: 'openai' })
+                    });
+                    return await res.text();
+                } else if (provider === 'githubmodels') {
+                    const res = await fetch('https://js.puter.com/v2/chat/completions', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ model: 'gpt-3.5-turbo', messages })
+                    });
+                    const data = await res.json();
+                    return data.choices[0].message.content;
+                } else if (provider === 'groq') {
+                    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
+                    });
+                    const data = await res.json();
+                    return data.choices[0].message.content;
+                } else if (provider === 'gemini') {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+                    const res = await fetch(url, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+                    const data = await res.json();
+                    return data.candidates[0].content.parts[0].text;
+                }
+                throw new Error('Provider tidak dikenal');
+            }, []);
+            return { callAI };
         }
-        const messages = [
-            { role: 'system', content: systemMsg },
-            { role: 'user', content: prompt }
-        ];
-        if (provider === 'pollinations') {
-            const res = await fetch('https://text.pollinations.ai/', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages, model: 'openai' })
-            });
-            const text = await res.text();
-            return text;
-        } else if (provider === 'githubmodels') {
-            const res = await fetch('https://js.puter.com/v2/chat/completions', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: 'gpt-3.5-turbo', messages })
-            });
-            const data = await res.json();
-            return data.choices[0].message.content;
-        } else if (provider === 'groq') {
-            const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-                body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
-            });
-            const data = await res.json();
-            return data.choices[0].message.content;
-        } else if (provider === 'gemini') {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
-            const res = await fetch(url, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            const data = await res.json();
-            return data.candidates[0].content.parts[0].text;
-        } else {
-            throw new Error('Provider tidak didukung');
+        
+        // === Three.js Background Component ===
+        function ThreeBackground() {
+            const mountRef = useRef(null);
+            useEffect(() => {
+                if (!mountRef.current) return;
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 3;
+                const renderer = new THREE.WebGLRenderer({ alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setClearColor(0x000000, 0);
+                mountRef.current.appendChild(renderer.domElement);
+                
+                const geometry = new THREE.SphereGeometry(1.2, 64, 64);
+                const material = new THREE.MeshStandardMaterial({ color: 0x3b82f6, wireframe: true, emissive: 0x1e40af });
+                const sphere = new THREE.Mesh(geometry, material);
+                scene.add(sphere);
+                
+                const starsGeometry = new THREE.BufferGeometry();
+                const starsCount = 2000;
+                const starsPositions = new Float32Array(starsCount * 3);
+                for (let i = 0; i < starsCount; i++) {
+                    starsPositions[i*3] = (Math.random() - 0.5) * 200;
+                    starsPositions[i*3+1] = (Math.random() - 0.5) * 100;
+                    starsPositions[i*3+2] = (Math.random() - 0.5) * 50 - 20;
+                }
+                starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
+                const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
+                const stars = new THREE.Points(starsGeometry, starsMaterial);
+                scene.add(stars);
+                
+                const ambientLight = new THREE.AmbientLight(0x404040);
+                scene.add(ambientLight);
+                const pointLight = new THREE.PointLight(0xffffff, 1);
+                pointLight.position.set(5, 5, 5);
+                scene.add(pointLight);
+                
+                let time = 0;
+                function animate() {
+                    requestAnimationFrame(animate);
+                    time += 0.005;
+                    sphere.rotation.x = time * 0.5;
+                    sphere.rotation.y = time * 0.3;
+                    stars.rotation.y = time * 0.05;
+                    renderer.render(scene, camera);
+                }
+                animate();
+                
+                const handleResize = () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                };
+                window.addEventListener('resize', handleResize);
+                return () => {
+                    window.removeEventListener('resize', handleResize);
+                    if (mountRef.current) mountRef.current.removeChild(renderer.domElement);
+                    renderer.dispose();
+                };
+            }, []);
+            return createElement('div', { ref: mountRef, className: 'fixed inset-0 -z-10' });
         }
-    }
-
-    // ==================== TAB 1: REWRITER ====================
-    async function rewriteSentence() {
-        const text = document.getElementById('sourceSentence').value.trim();
-        if (!text) { document.getElementById('rewriterError').innerText = 'Masukkan kalimat.'; return; }
-        const psycho = document.getElementById('psychoToggle').checked;
-        const prompt = `Rangkai ulang kalimat berikut ke dalam 3 versi bahasa: Indonesia, Inggris, Melayu Malaysia. Setiap versi harus diawali "Pengguna yang terhormat," dan diakhiri "terima kasih." Gaya formal, baku, profesional. ${psycho ? 'Gunakan referensi psikologi (sugesti, persuasi, framing, conditioning) untuk memberikan nuansa mendalam.' : 'Jangan gunakan psikologi.'} Kalimat: "${text}". Output hanya JSON: {"indonesia":"...","inggris":"...","melayu":"..."}`;
-        const btn = document.getElementById('rewriteBtn');
-        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Memproses AI...';
-        try {
-            const response = await callAI(prompt, "Output hanya JSON valid tanpa teks lain.");
-            let jsonMatch = response.match(/\{[\s\S]*\}/);
-            if (!jsonMatch) throw new Error('Response bukan JSON');
-            const data = JSON.parse(jsonMatch[0]);
-            document.getElementById('outputInd').innerText = data.indonesia || 'Error';
-            document.getElementById('outputEng').innerText = data.inggris || 'Error';
-            document.getElementById('outputMay').innerText = data.melayu || 'Error';
-            document.getElementById('rewriterError').innerText = '✅ Berhasil.';
-        } catch(e) {
-            document.getElementById('rewriterError').innerText = 'Gagal: '+e.message;
-        } finally {
-            btn.disabled = false; btn.innerHTML = '✨ Rangkai Ulang dengan AI ✨';
+        
+        // === History Drawer ===
+        function HistoryDrawer({ open, onClose }) {
+            const [history, setHistory] = useState([]);
+            useEffect(() => {
+                const stored = localStorage.getItem('aiHistory');
+                if (stored) setHistory(JSON.parse(stored));
+                const handleStorage = () => {
+                    const newStored = localStorage.getItem('aiHistory');
+                    if (newStored) setHistory(JSON.parse(newStored));
+                };
+                window.addEventListener('storage', handleStorage);
+                return () => window.removeEventListener('storage', handleStorage);
+            }, []);
+            if (!open) return null;
+            return createElement('div', { className: 'fixed inset-0 z-50 flex justify-end' },
+                createElement('div', { className: 'absolute inset-0 bg-black/50', onClick: onClose }),
+                createElement('div', { className: 'relative w-80 h-full bg-white dark:bg-gray-800 shadow-xl p-4 overflow-y-auto' },
+                    createElement('div', { className: 'flex justify-between items-center mb-4' },
+                        createElement('h2', { className: 'text-lg font-bold' }, '📜 Riwayat'),
+                        createElement('button', { onClick: onClose, className: 'p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700' }, '✖️')
+                    ),
+                    history.length === 0 && createElement('p', { className: 'text-sm text-gray-500' }, 'Belum ada riwayat'),
+                    history.map((item, idx) => createElement('div', { key: idx, className: 'p-2 mb-2 rounded-md bg-gray-100 dark:bg-gray-700 text-sm cursor-pointer hover:bg-gray-200', onClick: () => {
+                        if (item.type === 'Rewriter') {
+                            document.getElementById('sourceSentence').value = item.input;
+                            if (item.output) {
+                                document.getElementById('outputInd').innerText = item.output.indonesia || '';
+                                document.getElementById('outputEng').innerText = item.output.inggris || '';
+                                document.getElementById('outputMay').innerText = item.output.melayu || '';
+                            }
+                        } else if (item.type === 'Fintech') {
+                            document.getElementById('fintechInput').value = item.input;
+                            document.getElementById('fintechOutput').innerText = item.output;
+                        }
+                        onClose();
+                    } },
+                        createElement('div', { className: 'font-semibold' }, item.type),
+                        createElement('div', { className: 'text-xs truncate' }, item.input)
+                    ))
+                )
+            );
         }
-    }
-    document.getElementById('rewriteBtn').addEventListener('click', rewriteSentence);
-
-    // ==================== TAB 2: FINTECH (AI + RULE) ====================
-    // Rule-based version
-    function formatFintechRule(raw) {
-        let cleaned = raw.replace(/[•\-–—*_]/g, ' ').replace(/\s+/g, ' ').trim();
-        let accountNumber = (cleaned.match(/\b(\d{8,20})\b/) || [])[1] || 'Tidak ditemukan';
-        let bankMatch = cleaned.match(/(bank\s+(\w+)|bca|mandiri|bri|bni|cimb|danamon|permata|maybank|muamalat|bsi|btn)/i);
-        let bankName = bankMatch ? bankMatch[0].replace(/^bank\s+/i,'') : 'Tidak terdeteksi';
-        bankName = bankName.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
-        let nameMatch = cleaned.match(/(a\/n|a\.n|an\.|atas nama)[\s:]+([A-Za-z\s\.]+?)(?=\s*(?:no|rek|$|\d))/i);
-        let accountName = nameMatch ? nameMatch[2].trim().replace(/\s+/g,' ').split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ') : 'Tidak terdeteksi';
-        return `BANK NAME: ${bankName}\nACCOUNT NAME: ${accountName}\nACCOUNT NUMBER: ${accountNumber}`;
-    }
-    async function formatFintechAI() {
-        const raw = document.getElementById('fintechInput').value;
-        if (!raw.trim()) { document.getElementById('fintechOutput').innerText = 'Masukkan data.'; return; }
-        const prompt = `Ekstrak informasi perbankan dari teks berikut. Output hanya tiga baris: BANK NAME: [nama bank], ACCOUNT NAME: [nama pemilik], ACCOUNT NUMBER: [nomor rekening]. Jangan tambahkan teks lain. Gunakan Title Case untuk nama. Teks: "${raw}"`;
-        const btn = document.getElementById('fintechAiBtn');
-        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>AI memproses...';
-        try {
-            const result = await callAI(prompt, "Anda adalah ekstraktor data perbankan yang akurat.");
-            let lines = result.split('\n').slice(0,3).join('\n');
-            document.getElementById('fintechOutput').innerText = lines;
-        } catch(e) {
-            document.getElementById('fintechOutput').innerText = 'Error AI: ' + e.message + '\nMenggunakan rule fallback:\n' + formatFintechRule(raw);
-        } finally {
-            btn.disabled = false; btn.innerHTML = '🧠 Format dengan AI (Pintar)';
+        
+        // === Toast Context Sederhana ===
+        let toastId = 0;
+        function ToastContainer() {
+            const [toasts, setToasts] = useState([]);
+            useEffect(() => {
+                window.showToast = (message, type = 'info') => {
+                    const id = toastId++;
+                    setToasts(prev => [...prev, { id, message, type }]);
+                    setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 3000);
+                };
+            }, []);
+            return createElement('div', { className: 'fixed bottom-4 right-4 z-50 flex flex-col gap-2' },
+                toasts.map(toast => createElement('div', { key: toast.id, className: cn('toast px-4 py-2 rounded-lg shadow-lg text-white text-sm', toast.type === 'error' ? 'bg-red-500' : 'bg-gray-800 dark:bg-gray-700') }, toast.message))
+            );
         }
-    }
-    document.getElementById('fintechRuleBtn').addEventListener('click', () => {
-        const raw = document.getElementById('fintechInput').value;
-        if (!raw.trim()) { document.getElementById('fintechOutput').innerText = 'Masukkan data.'; return; }
-        document.getElementById('fintechOutput').innerText = formatFintechRule(raw);
-    });
-    document.getElementById('fintechAiBtn').addEventListener('click', formatFintechAI);
-    // Trigger detection (rule-based only for info)
-    function detectTrigger(t) { return /\b(bank|rekening|account|no rekening|a\/n)\b/i.test(t) || /\b\d{8,20}\b/.test(t); }
-    document.getElementById('fintechInput').addEventListener('input', function() {
-        const status = detectTrigger(this.value) ? '✅ Trigger terdeteksi (bank/rekening/angka)' : '🔍 Tidak terdeteksi';
-        document.getElementById('triggerStatus').innerText = status;
-    });
-
-    // ==================== TAB 3: SURAT OTOMATIS (AI Enhanced) ====================
-    // Render surat manual
-    function renderSurat() {
-        document.getElementById('viewJudul').innerText = document.getElementById('inputJudul').value;
-        document.getElementById('viewNomor').innerText = "Nomor: " + document.getElementById('inputNomor').value;
-        let isi = document.getElementById('inputIsi').value;
-        document.getElementById('viewIsi').innerHTML = isi.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&lt;br&gt;/gi, '<br>');
-        document.getElementById('viewTanggal').innerText = document.getElementById('inputTanggal').value;
-        document.getElementById('viewNamaTtd').innerText = document.getElementById('inputNamaTtd').value;
-    }
-    function updateWarna() {
-        const warna = document.getElementById('jenisSurat').value;
-        document.documentElement.style.setProperty('--primary-color', warna);
-        document.getElementById('headerLine').style.borderBottomColor = warna;
-    }
-    document.getElementById('inputJudul').addEventListener('input', renderSurat);
-    document.getElementById('inputNomor').addEventListener('input', renderSurat);
-    document.getElementById('inputIsi').addEventListener('input', renderSurat);
-    document.getElementById('inputTanggal').addEventListener('input', renderSurat);
-    document.getElementById('inputNamaTtd').addEventListener('input', renderSurat);
-    document.getElementById('jenisSurat').addEventListener('change', updateWarna);
-    renderSurat(); updateWarna();
-
-    // Logo upload
-    const logoInput = document.getElementById('logoInput');
-    logoInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                document.getElementById('logoPreview').src = ev.target.result;
-                document.getElementById('wmImage').src = ev.target.result;
+        
+        // === Rewriter Tab ===
+        function RewriterTab() {
+            const [text, setText] = useState('Dengan adanya inovasi teknologi, kita harus beradaptasi secara cepat agar tidak tertinggal dari kompetitor global.');
+            const [psycho, setPsycho] = useState(false);
+            const [loading, setLoading] = useState(false);
+            const [output, setOutput] = useState({ indonesia: '—', inggris: '—', melayu: '—' });
+            const { callAI } = useAI();
+            
+            const handleRewrite = async () => {
+                if (!text.trim()) { window.showToast('Masukkan kalimat', 'error'); return; }
+                setLoading(true);
+                const prompt = `Rangkai ulang kalimat ke 3 bahasa: Indonesia, Inggris, Melayu Malaysia. Setiap diawali "Pengguna yang terhormat," diakhiri "terima kasih." Gaya formal, profesional. ${psycho ? 'Gunakan psikologi (sugesti, persuasi, framing).' : ''} Kalimat: "${text}". Output JSON: {"indonesia":"...","inggris":"...","melayu":"..."}`;
+                try {
+                    const res = await callAI(prompt, "Output hanya JSON valid.");
+                    const match = res.match(/\{[\s\S]*\}/);
+                    if (!match) throw new Error('Bukan JSON');
+                    const data = JSON.parse(match[0]);
+                    setOutput(data);
+                    const history = JSON.parse(localStorage.getItem('aiHistory') || '[]');
+                    history.unshift({ type: 'Rewriter', input: text, output: data, timestamp: Date.now() });
+                    localStorage.setItem('aiHistory', JSON.stringify(history.slice(0, 20)));
+                    window.showToast('Berhasil dirangkai');
+                } catch (err) {
+                    window.showToast(err.message, 'error');
+                } finally { setLoading(false); }
             };
-            reader.readAsDataURL(file);
+            
+            const copyText = (txt) => { navigator.clipboard.writeText(txt); window.showToast('Tersalin'); };
+            const downloadTxt = () => {
+                const content = `INDONESIA:\n${output.indonesia}\n\nENGLISH:\n${output.inggris}\n\nMELAYU:\n${output.melayu}`;
+                const blob = new Blob([content], { type: 'text/plain' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'rewriter_result.txt';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            };
+            
+            return createElement('div', { className: 'space-y-6' },
+                createElement('div', { className: 'relative' },
+                    createElement('textarea', { id: 'sourceSentence', value: text, onChange: (e) => setText(e.target.value), rows: 3, className: 'w-full p-4 rounded-xl border bg-white dark:bg-gray-800 resize-none focus:ring-2 focus:ring-blue-500' }),
+                    createElement('button', { className: 'absolute bottom-3 right-3 p-2 rounded-full bg-blue-500 text-white', onClick: () => {
+                        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                        if (SpeechRecognition) {
+                            const recognition = new SpeechRecognition();
+                            recognition.lang = 'id-ID';
+                            recognition.onresult = (e) => setText(text + e.results[0][0].transcript);
+                            recognition.start();
+                        } else window.showToast('Voice tidak didukung', 'error');
+                    } }, '🎤')
+                ),
+                createElement('div', { className: 'flex flex-wrap gap-4 justify-between items-center' },
+                    createElement('label', { className: 'flex items-center gap-2' }, createElement('input', { type: 'checkbox', checked: psycho, onChange: (e) => setPsycho(e.target.checked) }), ' 🧠 Mode Psikologi'),
+                    createElement('button', { onClick: handleRewrite, disabled: loading, className: 'px-6 py-2 bg-blue-600 text-white rounded-full font-semibold disabled:opacity-50' }, loading ? 'Memproses...' : '✨ Rangkai Ulang')
+                ),
+                createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-4' },
+                    Object.entries(output).map(([lang, val]) => createElement('div', { key: lang, className: 'p-4 rounded-xl bg-white dark:bg-gray-800 shadow-sm' },
+                        createElement('div', { className: 'flex justify-between items-center mb-2' },
+                            createElement('span', { className: 'font-bold' }, lang === 'indonesia' ? '🇮🇩 Indonesia' : lang === 'inggris' ? '🇬🇧 English' : '🇲🇾 Melayu'),
+                            createElement('button', { onClick: () => copyText(val), className: 'p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700' }, '📋')
+                        ),
+                        createElement('div', { className: 'text-sm whitespace-pre-wrap' }, val)
+                    ))
+                ),
+                createElement('div', { className: 'flex justify-end' },
+                    createElement('button', { onClick: downloadTxt, className: 'flex items-center gap-2 px-4 py-2 rounded-full border' }, '💾 Download TXT')
+                )
+            );
         }
-    });
-
-    // AI Generate Isi Surat
-    async function generateSuratWithAI() {
-        const prompt = `Buatkan isi surat resmi untuk "TK Mall Alliance" dengan topik umum kemitraan atau tugas. Gunakan format surat dinas yang rapi, paragraf jelas, dengan salam pembuka dan penutup. Jangan sertakan kop surat atau tanda tangan. Hasilkan hanya teks isi surat, menggunakan <br> untuk baris baru.`;
-        const btn = document.getElementById('aiGenerateSurat');
-        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Menulis surat...';
-        try {
-            const result = await callAI(prompt, "Anda penulis surat profesional.");
-            document.getElementById('inputIsi').value = result.replace(/\n/g, '<br>');
-            renderSurat();
-        } catch(e) {
-            alert('Gagal generate: '+e.message);
-        } finally {
-            btn.disabled = false; btn.innerHTML = '🤖 Generate Isi Surat dengan AI';
+        
+        // === Fintech Tab ===
+        function FintechTab() {
+            const [input, setInput] = useState('BCA an. Ahmad Fauzi no rek 1234567890123456');
+            const [output, setOutput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const { callAI } = useAI();
+            
+            const formatRule = (raw) => {
+                let cleaned = raw.replace(/[•\-–—*_]/g, ' ').replace(/\s+/g, ' ').trim();
+                let accountNumber = (cleaned.match(/\b(\d{8,20})\b/) || [])[1] || 'Tidak ditemukan';
+                let bankMatch = cleaned.match(/(bank\s+(\w+)|bca|mandiri|bri|bni|cimb|danamon|permata|maybank|muamalat|bsi|btn)/i);
+                let bankName = bankMatch ? bankMatch[0].replace(/^bank\s+/i,'') : 'Tidak terdeteksi';
+                bankName = bankName.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+                let nameMatch = cleaned.match(/(a\/n|a\.n|an\.|atas nama)[\s:]+([A-Za-z\s\.]+?)(?=\s*(?:no|rek|$|\d))/i);
+                let accountName = nameMatch ? nameMatch[2].trim().split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ') : 'Tidak terdeteksi';
+                return `BANK NAME: ${bankName}\nACCOUNT NAME: ${accountName}\nACCOUNT NUMBER: ${accountNumber}`;
+            };
+            
+            const handleRule = () => setOutput(formatRule(input));
+            const handleAI = async () => {
+                if (!input.trim()) return;
+                setLoading(true);
+                const prompt = `Ekstrak info perbankan: BANK NAME, ACCOUNT NAME, ACCOUNT NUMBER. Output tiga baris sesuai format. Teks: "${input}"`;
+                try {
+                    const res = await callAI(prompt);
+                    const lines = res.split('\n').slice(0,3).join('\n');
+                    setOutput(lines);
+                    const history = JSON.parse(localStorage.getItem('aiHistory') || '[]');
+                    history.unshift({ type: 'Fintech', input, output: lines, timestamp: Date.now() });
+                    localStorage.setItem('aiHistory', JSON.stringify(history.slice(0, 20)));
+                    window.showToast('AI selesai');
+                } catch (err) {
+                    setOutput(formatRule(input));
+                    window.showToast(err.message, 'error');
+                } finally { setLoading(false); }
+            };
+            const copy = () => { navigator.clipboard.writeText(output); window.showToast('Tersalin'); };
+            const download = () => {
+                const blob = new Blob([output], {type: 'text/plain'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'fintech_result.txt';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            };
+            const triggerDetect = (t) => /\b(bank|rekening|account|no rekening|a\/n)\b/i.test(t) || /\b\d{8,20}\b/.test(t);
+            
+            return createElement('div', { className: 'space-y-6' },
+                createElement('textarea', { id: 'fintechInput', value: input, onChange: (e) => setInput(e.target.value), rows: 4, className: 'w-full p-4 rounded-xl border bg-white dark:bg-gray-800' }),
+                createElement('div', { className: 'flex gap-3' },
+                    createElement('button', { onClick: handleRule, className: 'px-4 py-2 rounded-full bg-gray-500 text-white' }, '🔍 Rule (Cepat)'),
+                    createElement('button', { onClick: handleAI, disabled: loading, className: 'px-4 py-2 rounded-full bg-blue-600 text-white' }, loading ? 'Memproses...' : '🧠 AI (Pintar)')
+                ),
+                createElement('div', { className: 'text-sm' }, createElement('span', { className: cn('inline-block px-2 py-1 rounded-full', triggerDetect(input) ? 'bg-green-100 text-green-800' : 'bg-gray-100') }, triggerDetect(input) ? '✅ Trigger terdeteksi' : '🔍 Tidak terdeteksi')),
+                createElement('div', { id: 'fintechOutput', className: 'p-4 rounded-xl bg-white dark:bg-gray-800 shadow-sm whitespace-pre-wrap font-mono' }, output || 'Hasil akan muncul di sini'),
+                createElement('div', { className: 'flex gap-3 justify-end' },
+                    createElement('button', { onClick: copy, className: 'flex items-center gap-1 px-3 py-1 rounded-full border' }, '📋 Copy'),
+                    createElement('button', { onClick: download, className: 'flex items-center gap-1 px-3 py-1 rounded-full border' }, '💾 Download')
+                )
+            );
         }
-    }
-    async function optimizeSuratGaya() {
-        const currentIsi = document.getElementById('inputIsi').value;
-        if (!currentIsi.trim()) { alert('Isi surat kosong.'); return; }
-        const prompt = `Perbaiki gaya surat berikut menjadi lebih formal, baku, dan profesional. Perbaiki ejaan dan tata bahasa. Jangan ubah fakta penting. Output hanya teks surat yang sudah dioptimasi, gunakan <br> untuk baris baru. Teks: ${currentIsi}`;
-        const btn = document.getElementById('optimizeSurat');
-        btn.disabled = true; btn.innerHTML = '<span class="loader"></span>Mengoptimasi...';
-        try {
-            const result = await callAI(prompt, "Anda ahli bahasa Indonesia formal.");
-            document.getElementById('inputIsi').value = result.replace(/\n/g, '<br>');
-            renderSurat();
-        } catch(e) {
-            alert('Gagal optimasi: '+e.message);
-        } finally {
-            btn.disabled = false; btn.innerHTML = '✨ Optimasi Gaya Surat (AI)';
+        
+        // === Surat Tab ===
+        function SuratTab() {
+            const [judul, setJudul] = useState('SURAT TUGAS');
+            const [nomor, setNomor] = useState('001/TGA/ALLIANCE/2026');
+            const [isi, setIsi] = useState('Menimbang: Perlunya kelancaran operasional di lingkungan mall.<br><br>Dasar: Kebijakan kemitraan dengan TikTok.<br><br>MEMBERI TUGAS KEPADA:<br>Nama: Budi Santoso<br>Jabatan: Marketing Ops');
+            const [tanggal, setTanggal] = useState('Jakarta, 19 Mei 2026');
+            const [ttd, setTtd] = useState('Manajemen Alliance');
+            const [logo, setLogo] = useState(null);
+            const { callAI } = useAI();
+            
+            const handleLogoUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setLogo(ev.target.result);
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            const generateWithAI = async () => {
+                const prompt = `Buat isi surat resmi untuk "TK Mall Alliance" tentang kemitraan. Gunakan format formal, paragraf jelas, gunakan <br> untuk baris baru.`;
+                try {
+                    const res = await callAI(prompt);
+                    setIsi(res.replace(/\n/g, '<br>'));
+                    window.showToast('Isi surat dibuat AI');
+                } catch (err) { window.showToast(err.message, 'error'); }
+            };
+            
+            const optimizeGaya = async () => {
+                const prompt = `Perbaiki gaya surat berikut menjadi lebih formal, baku, profesional. Output teks dengan <br> untuk baris baru: ${isi}`;
+                try {
+                    const res = await callAI(prompt);
+                    setIsi(res.replace(/\n/g, '<br>'));
+                    window.showToast('Gaya dioptimasi');
+                } catch (err) { window.showToast(err.message, 'error'); }
+            };
+            
+            const downloadHtml = () => {
+                const htmlContent = `
+                <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Surat</title><style>
+                body { margin: 0; padding: 20mm; background: white; }
+                .letter-page { max-width: 210mm; margin: 0 auto; }
+                .header { display: flex; justify-content: space-between; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px; }
+                .logo-img { height: 50px; }
+                .title-surat { text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+                .signature { margin-top: 50px; text-align: right; }
+                .footer { margin-top: 30px; text-align: center; font-size: 10px; border-top: 1px solid #ccc; padding-top: 8px; }
+                </style></head><body>
+                <div class="letter-page">
+                    <div class="header">
+                        <div><img class="logo-img" src="${logo || ''}" alt="logo"></div>
+                        <div><strong>TK MALL ALLIANCE</strong><br>Gedung Alliance Mall Lt. 2</div>
+                    </div>
+                    <div class="title-surat">${judul}</div>
+                    <div class="nomor-surat">Nomor: ${nomor}</div>
+                    <div>${isi}</div>
+                    <div class="signature">${tanggal}<br><br><br>${ttd}</div>
+                    <div class="footer">Dokumen Resmi TK Mall Alliance</div>
+                </div>
+                </body></html>`;
+                const blob = new Blob([htmlContent], {type: 'text/html'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'surat.html';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            };
+            
+            return createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6' },
+                createElement('div', { className: 'space-y-4' },
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Logo'), createElement('input', { type: 'file', accept: 'image/*', onChange: handleLogoUpload, className: 'w-full' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Jenis Surat'), createElement('select', { className: 'w-full p-2 rounded border', defaultValue: '#3b82f6', onChange: (e) => document.documentElement.style.setProperty('--primary-color', e.target.value) }, 
+                        createElement('option', { value: '#3b82f6' }, 'Pemberitahuan (Biru)'),
+                        createElement('option', { value: '#003366' }, 'Perintah (Navy)'),
+                        createElement('option', { value: '#28a745' }, 'Tugas (Hijau)'),
+                        createElement('option', { value: '#8b0000' }, 'Peringatan (Merah)')
+                    )),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Judul'), createElement('input', { value: judul, onChange: (e) => setJudul(e.target.value), className: 'w-full p-2 rounded border' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Nomor'), createElement('input', { value: nomor, onChange: (e) => setNomor(e.target.value), className: 'w-full p-2 rounded border' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Isi (dengan <br>)'), createElement('textarea', { value: isi, onChange: (e) => setIsi(e.target.value), rows: 8, className: 'w-full p-2 rounded border' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Tanggal'), createElement('input', { value: tanggal, onChange: (e) => setTanggal(e.target.value), className: 'w-full p-2 rounded border' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Penandatangan'), createElement('input', { value: ttd, onChange: (e) => setTtd(e.target.value), className: 'w-full p-2 rounded border' })),
+                    createElement('div', { className: 'flex gap-3' },
+                        createElement('button', { onClick: generateWithAI, className: 'px-4 py-2 bg-green-600 text-white rounded-full' }, '🤖 Generate AI'),
+                        createElement('button', { onClick: optimizeGaya, className: 'px-4 py-2 bg-blue-600 text-white rounded-full' }, '✨ Optimasi Gaya')
+                    ),
+                    createElement('button', { onClick: downloadHtml, className: 'w-full py-2 bg-gray-800 text-white rounded-full' }, '💾 Download Surat (HTML)'),
+                    createElement('button', { onClick: () => window.print(), className: 'w-full py-2 bg-gray-600 text-white rounded-full' }, '🖨️ Cetak / PDF')
+                ),
+                createElement('div', { className: 'preview-container overflow-auto' },
+                    createElement('div', { className: 'letter-page bg-white text-black p-8 shadow-lg rounded-lg mx-auto', style: { maxWidth: '210mm' } },
+                        logo && createElement('img', { src: logo, className: 'watermark-img', alt: 'watermark' }),
+                        createElement('div', { className: 'header flex justify-between border-b-2 pb-2 mb-4', style: { borderBottomColor: 'var(--primary-color, #3b82f6)' } },
+                            createElement('div', null, logo && createElement('img', { src: logo, className: 'h-12', alt: 'logo' }), createElement('div', { className: 'text-sm' }, 'Alliance Mall | TikTok Partner')),
+                            createElement('div', { className: 'text-right text-xs' }, 'TK MALL ALLIANCE<br>Gedung Alliance Mall Lt. 2')
+                        ),
+                        createElement('div', { className: 'title-surat text-center font-bold text-lg uppercase' }, judul),
+                        createElement('div', { className: 'nomor-surat text-center text-sm mb-4' }, `Nomor: ${nomor}`),
+                        createElement('div', { dangerouslySetInnerHTML: { __html: isi } }),
+                        createElement('div', { className: 'signature mt-12 text-right' }, createElement('div', null, tanggal), createElement('div', { className: 'mt-8' }, ttd)),
+                        createElement('div', { className: 'footer text-center text-xs border-t pt-2 mt-6' }, 'Dokumen Resmi TK Mall Alliance - TikTok Partner')
+                    )
+                )
+            );
         }
-    }
-    document.getElementById('aiGenerateSurat').addEventListener('click', generateSuratWithAI);
-    document.getElementById('optimizeSurat').addEventListener('click', optimizeSuratGaya);
-
-    // Inisialisasi default contoh untuk rewriter
-    if (!document.getElementById('sourceSentence').value) {
-        document.getElementById('sourceSentence').value = "Dengan adanya inovasi teknologi, kita harus beradaptasi secara cepat agar tidak tertinggal dari kompetitor global.";
-    }
-    // Watermark default logo
-    if (!document.getElementById('logoPreview').src.includes('data:')) {
-        document.getElementById('wmImage').src = document.getElementById('logoPreview').src;
-    }
-</script>
+        
+        // === Main App ===
+        function App() {
+            const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
+            const [historyOpen, setHistoryOpen] = useState(false);
+            const [activeTab, setActiveTab] = useState('rewriter');
+            
+            useEffect(() => {
+                if (darkMode) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+                localStorage.setItem('darkMode', darkMode);
+            }, [darkMode]);
+            
+            const tabs = [
+                { id: 'rewriter', label: '✍️ Sentence Rewriter', component: RewriterTab },
+                { id: 'fintech', label: '🏦 Fintech Formatter', component: FintechTab },
+                { id: 'surat', label: '📄 Surat Otomatis', component: SuratTab }
+            ];
+            
+            return createElement('div', { className: 'relative min-h-screen' },
+                createElement(ThreeBackground, null),
+                createElement('div', { className: 'relative z-10 container mx-auto px-4 py-6' },
+                    createElement('div', { className: 'flex justify-between items-center mb-6' },
+                        createElement('h1', { className: 'text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent' }, 'AI Suite Pro'),
+                        createElement('div', { className: 'flex gap-3' },
+                            createElement('button', { onClick: () => setHistoryOpen(true), className: 'p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800' }, '📜'),
+                            createElement('button', { onClick: () => setDarkMode(!darkMode), className: 'p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800' }, darkMode ? '☀️' : '🌙')
+                        )
+                    ),
+                    createElement('div', { className: 'mb-6 p-4 bg-white dark:bg-gray-800 rounded-xl shadow-sm' },
+                        createElement('div', { className: 'flex flex-wrap items-center gap-4' },
+                            createElement('span', { className: 'font-semibold' }, '🤖 AI Engine:'),
+                            createElement('select', { id: 'globalProvider', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' },
+                                createElement('option', { value: 'pollinations' }, 'Pollinations AI (Gratis)'),
+                                createElement('option', { value: 'githubmodels' }, 'GitHub Models (Gratis)'),
+                                createElement('option', { value: 'groq' }, 'Groq (Llama 3.3)'),
+                                createElement('option', { value: 'gemini' }, 'Google Gemini')
+                            ),
+                            createElement('input', { type: 'password', id: 'globalApiKey', placeholder: 'API Key (jika perlu)', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' })
+                        )
+                    ),
+                    createElement('div', { className: 'flex gap-2 border-b mb-6' },
+                        tabs.map(tab => createElement('button', {
+                            key: tab.id,
+                            onClick: () => setActiveTab(tab.id),
+                            className: cn('px-4 py-2 font-semibold rounded-t-lg transition', activeTab === tab.id ? 'bg-blue-600 text-white' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800')
+                        }, tab.label))
+                    ),
+                    createElement('div', { className: 'bg-white dark:bg-gray-800 rounded-xl shadow p-6' },
+                        activeTab === 'rewriter' && createElement(RewriterTab, null),
+                        activeTab === 'fintech' && createElement(FintechTab, null),
+                        activeTab === 'surat' && createElement(SuratTab, null)
+                    ),
+                    createElement(HistoryDrawer, { open: historyOpen, onClose: () => setHistoryOpen(false) }),
+                    createElement(ToastContainer, null)
+                )
+            );
+        }
+        
+        // Render
+        const root = createRoot(document.getElementById('root'));
+        root.render(createElement(App, null));
+    </script>
 </body>
 </html>
