@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt System · DeepSeek · Rangkaikan Kata & Bank</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 2rem 1rem;
+            color: #0f172a;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #0c4a6e, #1e3a8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #cbd5e1;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 40px 40px 0 0;
+            transition: 0.2s;
+            color: #475569;
+        }
+        .tab-btn.active {
+            background: white;
+            color: #0c4a6e;
+            border-bottom: 3px solid #0c4a6e;
+        }
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            padding: 1.8rem;
+            border: 1px solid #e2e8f0;
+        }
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            font-family: monospace;
+            font-size: 0.9rem;
+            background: #fefefe;
+            resize: vertical;
+        }
+        button {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.8rem;
+            margin-right: 0.8rem;
+            transition: 0.2s;
+        }
+        button.secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+        .output-block {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1rem;
+            margin-top: 1.2rem;
+            border-left: 4px solid #0c4a6e;
+        }
+        .output-label {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #2c6e9e;
+            margin-bottom: 8px;
+        }
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 16px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        .fintech pre {
+            background: #2d2a1f;
+            color: #fde68a;
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .info {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 1rem;
+            color: #5b6e8c;
+        }
+    </style>
+    <!-- Puter.js CDN - menghubungkan ke DeepSeek tanpa API key -->
+    <script src="https://js.puter.com/v2/"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🌐 AI Prompt System · DeepSeek</h1>
+        <p>Rangkaikan Kata (3 bahasa) + Bank (FinTech) · AI nyata via DeepSeek (Puter.js)</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab1">✍️ Rangkaikan Kata</button>
+        <button class="tab-btn" data-tab="tab2">🏦 Bank (FinTech)</button>
+    </div>
+
+    <!-- Panel Rangkaikan Kata -->
+    <div id="tab1" class="tab-pane active">
+        <div class="card">
+            <h3 style="margin-bottom: 0.5rem;">📝 Parafrase & Susun Ulang (3 Bahasa)</h3>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem;">AI akan memperbaiki, membuat formal, to the point, lalu terjemahkan ke Indonesia, Inggris, Melayu.</p>
+            <textarea id="inputText" rows="4" placeholder="Contoh: tolong bantu saya untuk mengajukan cuti karena ada keperluan keluarga mendadak, terimakasih."></textarea>
+            <div>
+                <button id="processTextBtn">✨ Proses dengan AI</button>
+                <button id="clearTextBtn" class="secondary">Bersihkan</button>
+            </div>
+            <div id="textOutputArea">
+                <div class="output-block"><div class="output-label">🇮🇩 BAHASA INDONESIA</div><pre id="resultID">—</pre></div>
+                <div class="output-block"><div class="output-label">🇬🇧 ENGLISH</div><pre id="resultEN">—</pre></div>
+                <div class="output-block"><div class="output-label">🇲🇾 BAHASA MELAYU</div><pre id="resultMS">—</pre></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Bank FinTech -->
+    <div id="tab2" class="tab-pane">
+        <div class="card">
+            <h3 style="margin-bottom: 0.5rem;">🏦 Ekstrak & Format Data Perbankan</h3>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem;">AI akan mengekstrak Bank Name, Account Name, Account Number (tanpa mengubah data).</p>
+            <textarea id="bankInput" rows="4" placeholder="Contoh: Rekening BCA an. Ahmad Fauzi no 1234567890123456 untuk transfer dana."></textarea>
+            <div>
+                <button id="processBankBtn">🏦 Format Data Bank</button>
+                <button id="clearBankBtn" class="secondary">Bersihkan</button>
+            </div>
+            <div class="output-block fintech"><div class="output-label">📄 FINTECH OUTPUT</div><pre id="bankResult">—</pre></div>
+        </div>
+    </div>
+    <div class="info">✅ Terhubung ke DeepSeek via Puter.js (gratis, tanpa API key, tanpa hosting). AI bekerja nyata.</div>
+</div>
+
+<script>
+    // ======================= FUNGSI PANGGIL AI DEEPSEEK via Puter.js =======================
+    async function callDeepSeek(prompt, systemMessage = "") {
+        try {
+            const messages = [];
+            if (systemMessage) messages.push({ role: "system", content: systemMessage });
+            messages.push({ role: "user", content: prompt });
+            
+            // Menggunakan puter.ai.chat dengan model deepseek
+            const response = await puter.ai.chat(messages, {
+                model: "deepseek/deepseek-v4-flash"  // model cepat & gratis
+            });
+            return response.message.content;
+        } catch (error) {
+            console.error("Error AI:", error);
+            return "Terjadi kesalahan: " + error.message;
+        }
+    }
+
+    // =============== RANGKAIAN KATA ===============
+    const inputText = document.getElementById('inputText');
+    const processTextBtn = document.getElementById('processTextBtn');
+    const clearTextBtn = document.getElementById('clearTextBtn');
+    const resultID = document.getElementById('resultID');
+    const resultEN = document.getElementById('resultEN');
+    const resultMS = document.getElementById('resultMS');
+
+    // default demo
+    inputText.value = "saya mau minta tolong untuk perbaiki kalimat ini ya, karena saya ingin mengajukan cuti mendadak, makasih banyak.";
+
+    async function processText() {
+        const raw = inputText.value.trim();
+        if (!raw) {
+            alert("Masukkan teks terlebih dahulu.");
+            return;
+        }
+        // Loading state
+        resultID.innerText = "⏳ AI sedang memproses...";
+        resultEN.innerText = "⏳ ...";
+        resultMS.innerText = "⏳ ...";
+        
+        const systemPrompt = `Anda adalah AI asisten penulisan profesional. Tugas: perbaiki, rangkai ulang kalimat menjadi formal, baku, to the point, tanpa mengubah makna, tanpa menambah informasi. Jangan bertele-tele. Kemudian hasilkan dalam 3 bahasa: Indonesia, English, Melayu Malaysia. Format output HARUS persis seperti contoh:
+
+Indonesia: [kalimat hasil]
+English: [kalimat hasil]
+Melayu: [kalimat hasil]
+
+Hanya output format itu, tanpa penjelasan tambahan.`;
+        
+        const userPrompt = `Teks asli: "${raw}"\n\nLakukan sesuai instruksi.`;
+        
+        const aiResponse = await callDeepSeek(userPrompt, systemPrompt);
+        
+        // Parsing hasil AI yang diharapkan format "Indonesia: ... English: ... Melayu: ..."
+        let idText = "", enText = "", msText = "";
+        const indonesiaMatch = aiResponse.match(/Indonesia:\s*(.+?)(?=English:|$)/is);
+        const englishMatch = aiResponse.match(/English:\s*(.+?)(?=Melayu:|$)/is);
+        const melayuMatch = aiResponse.match(/Melayu:\s*(.+?)$/is);
+        
+        if (indonesiaMatch) idText = indonesiaMatch[1].trim();
+        if (englishMatch) enText = englishMatch[1].trim();
+        if (melayuMatch) msText = melayuMatch[1].trim();
+        
+        // fallback jika parsing gagal
+        if (!idText && !enText && !msText) {
+            // jika AI tidak mengikuti format, kita tampilkan raw response
+            resultID.innerText = aiResponse;
+            resultEN.innerText = "(AI tidak mengikuti format)";
+            resultMS.innerText = "";
+        } else {
+            resultID.innerText = idText || "(tidak ditemukan)";
+            resultEN.innerText = enText || "(tidak ditemukan)";
+            resultMS.innerText = msText || "(tidak ditemukan)";
+        }
+    }
+
+    processTextBtn.addEventListener('click', processText);
+    clearTextBtn.addEventListener('click', () => {
+        inputText.value = '';
+        resultID.innerText = '—';
+        resultEN.innerText = '—';
+        resultMS.innerText = '—';
+    });
+
+    // =============== BANK MODE ===============
+    const bankInput = document.getElementById('bankInput');
+    const processBankBtn = document.getElementById('processBankBtn');
+    const clearBankBtn = document.getElementById('clearBankBtn');
+    const bankResult = document.getElementById('bankResult');
+
+    bankInput.value = "Rekening BCA a.n. Siti Nurhaliza, nomor rek 98765432109876543210 untuk pembayaran.";
+
+    async function processBank() {
+        const rawBank = bankInput.value.trim();
+        if (!rawBank) {
+            alert("Masukkan teks yang berisi informasi bank.");
+            return;
+        }
+        bankResult.innerText = "⏳ AI mengekstrak data bank...";
+        
+        const systemBank = `Anda adalah AI ekstraktor data perbankan. Tugas: dari teks yang diberikan, ekstrak BANK NAME, ACCOUNT NAME, dan ACCOUNT NUMBER. Ikuti aturan:
+- Jangan ubah data faktual (nomor rekening tidak boleh diubah)
+- Gunakan Title Case untuk Bank Name & Account Name
+- Hapus simbol tidak perlu
+- Output hanya dalam format:
+BANK NAME: [nama bank]
+ACCOUNT NAME: [nama pemilik]
+ACCOUNT NUMBER: [nomor rekening]
+Tidak ada teks tambahan. Jika ada yang tidak ditemukan, tulis "Tidak ditemukan".`;
+        
+        const response = await callDeepSeek(rawBank, systemBank);
+        bankResult.innerText = response;
+    }
+
+    processBankBtn.addEventListener('click', processBank);
+    clearBankBtn.addEventListener('click', () => {
+        bankInput.value = '';
+        bankResult.innerText = '—';
+    });
+
+    // Tab switching
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            panes.forEach(pane => pane.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
