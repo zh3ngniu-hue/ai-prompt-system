@@ -3,57 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AI Suite Pro · React + Tailwind + Three.js</title>
-    <!-- Tailwind CSS CDN -->
+    <title>AI Suite Pro · Dewa Kalimat · Bendahara Jahanam · Surat Alam Semesta</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Framer Motion CDN (UMD) -->
     <script src="https://unpkg.com/framer-motion@11.0.2/dist/framer-motion.js"></script>
-    <!-- Three.js CDN -->
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.164.1/build/three.module.js"
-            }
-        }
+        { "imports": { "three": "https://unpkg.com/three@0.164.1/build/three.module.js" } }
     </script>
-    <!-- React & ReactDOM CDN -->
     <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <!-- Babel Standalone (untuk JSX) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Lucide Icons (optional) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
         .dark ::-webkit-scrollbar-track { background: #2d2d2d; }
-        .dark ::-webkit-scrollbar-thumb { background: #555; }
-        /* Toast animation */
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast { animation: slideIn 0.3s ease-out; }
-        /* Surat preview style */
-        .letter-page { width: 210mm; min-height: 297mm; background: white; color: black; padding: 20mm; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); margin: 0 auto; }
-        .watermark-img { position: absolute; opacity: 0.05; width: 80%; top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
-        @media print { .no-print { display: none; } .letter-page { box-shadow: none; margin: 0; padding: 0; } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* Preview surat */
+        .letter-preview {
+            transition: all 0.2s;
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 20mm; }
+            .no-print { display: none; }
+        }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
     <div id="root"></div>
-
     <script type="text/babel" data-type="module">
-        // === React & ReactDOM dari global ===
         const { useState, useEffect, useRef, useCallback, createElement } = React;
         const { createRoot } = ReactDOM;
-        
-        // === Import Three.js dari module ===
         import * as THREE from 'three';
         
-        // === Helper: cn untuk conditional className ===
         function cn(...classes) { return classes.filter(Boolean).join(' '); }
         
-        // === Custom Hooks ===
+        // ========== AI HOOK ==========
         function useAI() {
             const callAI = useCallback(async (prompt, systemMsg = "Anda asisten profesional.") => {
                 const provider = document.getElementById('globalProvider')?.value || 'pollinations';
@@ -61,23 +47,14 @@
                 if ((provider === 'groq' || provider === 'gemini') && !apiKey) {
                     throw new Error(`API Key untuk ${provider} diperlukan`);
                 }
-                const messages = [
-                    { role: 'system', content: systemMsg },
-                    { role: 'user', content: prompt }
-                ];
+                const messages = [{ role: 'system', content: systemMsg }, { role: 'user', content: prompt }];
                 if (provider === 'pollinations') {
                     const res = await fetch('https://text.pollinations.ai/', {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ messages, model: 'openai' })
                     });
+                    if (!res.ok) throw new Error(`Pollinations error: ${res.status}`);
                     return await res.text();
-                } else if (provider === 'githubmodels') {
-                    const res = await fetch('https://js.puter.com/v2/chat/completions', {
-                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ model: 'gpt-3.5-turbo', messages })
-                    });
-                    const data = await res.json();
-                    return data.choices[0].message.content;
                 } else if (provider === 'groq') {
                     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
@@ -99,7 +76,7 @@
             return { callAI };
         }
         
-        // === Three.js Background Component ===
+        // ========== THREE BACKGROUND ==========
         function ThreeBackground() {
             const mountRef = useRef(null);
             useEffect(() => {
@@ -111,12 +88,10 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 renderer.setClearColor(0x000000, 0);
                 mountRef.current.appendChild(renderer.domElement);
-                
                 const geometry = new THREE.SphereGeometry(1.2, 64, 64);
                 const material = new THREE.MeshStandardMaterial({ color: 0x3b82f6, wireframe: true, emissive: 0x1e40af });
                 const sphere = new THREE.Mesh(geometry, material);
                 scene.add(sphere);
-                
                 const starsGeometry = new THREE.BufferGeometry();
                 const starsCount = 2000;
                 const starsPositions = new Float32Array(starsCount * 3);
@@ -129,13 +104,11 @@
                 const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
                 const stars = new THREE.Points(starsGeometry, starsMaterial);
                 scene.add(stars);
-                
                 const ambientLight = new THREE.AmbientLight(0x404040);
                 scene.add(ambientLight);
                 const pointLight = new THREE.PointLight(0xffffff, 1);
                 pointLight.position.set(5, 5, 5);
                 scene.add(pointLight);
-                
                 let time = 0;
                 function animate() {
                     requestAnimationFrame(animate);
@@ -146,7 +119,6 @@
                     renderer.render(scene, camera);
                 }
                 animate();
-                
                 const handleResize = () => {
                     camera.aspect = window.innerWidth / window.innerHeight;
                     camera.updateProjectionMatrix();
@@ -162,7 +134,7 @@
             return createElement('div', { ref: mountRef, className: 'fixed inset-0 -z-10' });
         }
         
-        // === History Drawer ===
+        // ========== HISTORY DRAWER ==========
         function HistoryDrawer({ open, onClose }) {
             const [history, setHistory] = useState([]);
             useEffect(() => {
@@ -205,7 +177,7 @@
             );
         }
         
-        // === Toast Context Sederhana ===
+        // ========== TOAST ==========
         let toastId = 0;
         function ToastContainer() {
             const [toasts, setToasts] = useState([]);
@@ -221,7 +193,7 @@
             );
         }
         
-        // === Rewriter Tab ===
+        // ========== REWRITER TAB (Penyulap Kalimat Level Dewa) ==========
         function RewriterTab() {
             const [text, setText] = useState('Dengan adanya inovasi teknologi, kita harus beradaptasi secara cepat agar tidak tertinggal dari kompetitor global.');
             const [psycho, setPsycho] = useState(false);
@@ -291,7 +263,7 @@
             );
         }
         
-        // === Fintech Tab ===
+        // ========== FINTECH TAB (Bendahara online jahanam) ==========
         function FintechTab() {
             const [input, setInput] = useState('BCA an. Ahmad Fauzi no rek 1234567890123456');
             const [output, setOutput] = useState('');
@@ -309,157 +281,274 @@
                 return `BANK NAME: ${bankName}\nACCOUNT NAME: ${accountName}\nACCOUNT NUMBER: ${accountNumber}`;
             };
             
-            const handleRule = () => setOutput(formatRule(input));
             const handleAI = async () => {
-                if (!input.trim()) return;
+                if (!input.trim()) { window.showToast('Masukkan teks', 'error'); return; }
                 setLoading(true);
-                const prompt = `Ekstrak info perbankan: BANK NAME, ACCOUNT NAME, ACCOUNT NUMBER. Output tiga baris sesuai format. Teks: "${input}"`;
+                const prompt = `Ekstrak informasi perbankan dari teks berikut. Output hanya tiga baris: BANK NAME: [nama bank], ACCOUNT NAME: [nama pemilik], ACCOUNT NUMBER: [nomor rekening]. Jangan tambahkan teks lain. Teks: "${input}"`;
                 try {
-                    const res = await callAI(prompt);
+                    const res = await callAI(prompt, "Anda adalah ekstraktor data perbankan yang akurat.");
                     const lines = res.split('\n').slice(0,3).join('\n');
                     setOutput(lines);
                     const history = JSON.parse(localStorage.getItem('aiHistory') || '[]');
                     history.unshift({ type: 'Fintech', input, output: lines, timestamp: Date.now() });
                     localStorage.setItem('aiHistory', JSON.stringify(history.slice(0, 20)));
-                    window.showToast('AI selesai');
+                    window.showToast('Ekstraksi AI selesai');
                 } catch (err) {
                     setOutput(formatRule(input));
                     window.showToast(err.message, 'error');
                 } finally { setLoading(false); }
             };
-            const copy = () => { navigator.clipboard.writeText(output); window.showToast('Tersalin'); };
-            const download = () => {
-                const blob = new Blob([output], {type: 'text/plain'});
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'fintech_result.txt';
-                a.click();
-                URL.revokeObjectURL(a.href);
+            
+            const copyToClipboard = () => {
+                if (!output) { window.showToast('Tidak ada teks', 'error'); return; }
+                navigator.clipboard.writeText(output);
+                window.showToast('Tersalin ke clipboard');
             };
-            const triggerDetect = (t) => /\b(bank|rekening|account|no rekening|a\/n)\b/i.test(t) || /\b\d{8,20}\b/.test(t);
             
             return createElement('div', { className: 'space-y-6' },
-                createElement('textarea', { id: 'fintechInput', value: input, onChange: (e) => setInput(e.target.value), rows: 4, className: 'w-full p-4 rounded-xl border bg-white dark:bg-gray-800' }),
-                createElement('div', { className: 'flex gap-3' },
-                    createElement('button', { onClick: handleRule, className: 'px-4 py-2 rounded-full bg-gray-500 text-white' }, '🔍 Rule (Cepat)'),
-                    createElement('button', { onClick: handleAI, disabled: loading, className: 'px-4 py-2 rounded-full bg-blue-600 text-white' }, loading ? 'Memproses...' : '🧠 AI (Pintar)')
-                ),
-                createElement('div', { className: 'text-sm' }, createElement('span', { className: cn('inline-block px-2 py-1 rounded-full', triggerDetect(input) ? 'bg-green-100 text-green-800' : 'bg-gray-100') }, triggerDetect(input) ? '✅ Trigger terdeteksi' : '🔍 Tidak terdeteksi')),
-                createElement('div', { id: 'fintechOutput', className: 'p-4 rounded-xl bg-white dark:bg-gray-800 shadow-sm whitespace-pre-wrap font-mono' }, output || 'Hasil akan muncul di sini'),
+                createElement('textarea', { id: 'fintechInput', value: input, onChange: (e) => setInput(e.target.value), rows: 4, className: 'w-full p-4 rounded-xl border bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500' }),
                 createElement('div', { className: 'flex gap-3 justify-end' },
-                    createElement('button', { onClick: copy, className: 'flex items-center gap-1 px-3 py-1 rounded-full border' }, '📋 Copy'),
-                    createElement('button', { onClick: download, className: 'flex items-center gap-1 px-3 py-1 rounded-full border' }, '💾 Download')
-                )
+                    createElement('button', { onClick: handleAI, disabled: loading, className: 'px-6 py-2 rounded-full bg-blue-600 text-white font-semibold disabled:opacity-50 hover:bg-blue-700' }, loading ? 'Memproses...' : '🧠 AI (Pintar)'),
+                    createElement('button', { onClick: copyToClipboard, className: 'px-6 py-2 rounded-full bg-gray-600 text-white font-semibold hover:bg-gray-700' }, '📋 Copy')
+                ),
+                createElement('div', { id: 'fintechOutput', className: 'p-4 rounded-xl bg-white dark:bg-gray-800 shadow-inner whitespace-pre-wrap font-mono text-sm border' }, output || 'Hasil ekstraksi akan muncul di sini')
             );
         }
         
-        // === Surat Tab ===
+        // ========== SURAT TAB (Surat dari Alam Semesta) ==========
         function SuratTab() {
-            const [judul, setJudul] = useState('SURAT TUGAS');
-            const [nomor, setNomor] = useState('001/TGA/ALLIANCE/2026');
-            const [isi, setIsi] = useState('Menimbang: Perlunya kelancaran operasional di lingkungan mall.<br><br>Dasar: Kebijakan kemitraan dengan TikTok.<br><br>MEMBERI TUGAS KEPADA:<br>Nama: Budi Santoso<br>Jabatan: Marketing Ops');
-            const [tanggal, setTanggal] = useState('Jakarta, 19 Mei 2026');
-            const [ttd, setTtd] = useState('Manajemen Alliance');
-            const [logo, setLogo] = useState(null);
             const { callAI } = useAI();
             
-            const handleLogoUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => setLogo(ev.target.result);
-                    reader.readAsDataURL(file);
+            // State untuk data surat
+            const [docTitle, setDocTitle] = useState('SURAT PEMBERITAHUAN KEPATUHAN');
+            const [docRef, setDocRef] = useState('AMTK-COMPLIANCE-2026-0427-178');
+            const [docDate, setDocDate] = useState('27 April 2026');
+            const [recipient, setRecipient] = useState('Ahmad Zaheri bin Harun\nNo. Rekening : 112018017807\nBank : Maybank');
+            const [subject, setSubject] = useState('Pemberitahuan Kepatuhan Penarikan Dana Internasional');
+            const [paragraphs, setParagraphs] = useState([
+                'Dengan hormat,',
+                'Sehubungan dengan pengajuan penarikan dana bernilai besar, bersama ini kami sampaikan bahwa transaksi Anda memasuki prosedur kepatuhan dan peninjauan keamanan sesuai standar transaksi lintas negara.'
+            ]);
+            const [tableData, setTableData] = useState({
+                headers: ['Nama Pemilik Akun', 'No. Rekening', 'Bank Tujuan', 'Jenis Transaksi', 'Nilai Penarikan', 'Kewajiban (3%)'],
+                rows: [['Ahmad Zaheri bin Harun', '112018017807', 'Maybank', 'Penarikan Dana Internasional', 'Rp3.319.715.482', 'Rp99.591.464']]
+            });
+            const [signature, setSignature] = useState('Divisi Kepatuhan & Manajemen Risiko\nAlliance Mall TK');
+            const [footer, setFooter] = useState('COMPLIANCE & TRUST | YOUR SECURITY IS OUR PRIORITY');
+            
+            // Gaya tema (banyak pilihan)
+            const themes = {
+                modernBlue: { name: 'Modern Biru', bg: 'white', text: '#1e293b', accent: '#2563eb', accentBg: '#dbeafe', border: '#bfdbfe', tableHeader: '#2563eb', tableHeaderText: 'white', tableRowEven: '#f8fafc' },
+                freshGreen: { name: 'Hijau Segar', bg: '#f0fdf4', text: '#14532d', accent: '#16a34a', accentBg: '#dcfce7', border: '#bbf7d0', tableHeader: '#15803d', tableHeaderText: 'white', tableRowEven: '#f0fdf4' },
+                elegantGray: { name: 'Abu-abu Elegan', bg: '#f9fafb', text: '#111827', accent: '#4b5563', accentBg: '#f3f4f6', border: '#e5e7eb', tableHeader: '#374151', tableHeaderText: 'white', tableRowEven: '#f9fafb' },
+                creamClassic: { name: 'Krem Klasik', bg: '#fffbeb', text: '#78350f', accent: '#d97706', accentBg: '#fef3c7', border: '#fde68a', tableHeader: '#b45309', tableHeaderText: 'white', tableRowEven: '#fffbeb' },
+                maroonLuxury: { name: 'Marun Mewah', bg: '#fff1f2', text: '#881337', accent: '#e11d48', accentBg: '#ffe4e6', border: '#fecdd3', tableHeader: '#be123c', tableHeaderText: 'white', tableRowEven: '#fff1f2' },
+                goldBlack: { name: 'Hitam Emas', bg: '#1c1917', text: '#fef08a', accent: '#eab308', accentBg: '#292524', border: '#713f12', tableHeader: '#facc15', tableHeaderText: '#1c1917', tableRowEven: '#292524' },
+                purpleModern: { name: 'Ungu Muda', bg: '#faf5ff', text: '#4c1d95', accent: '#8b5cf6', accentBg: '#ede9fe', border: '#ddd6fe', tableHeader: '#7c3aed', tableHeaderText: 'white', tableRowEven: '#faf5ff' }
+            };
+            const [currentTheme, setCurrentTheme] = useState('modernBlue');
+            const theme = themes[currentTheme];
+            
+            // Generate surat dari deskripsi
+            const [generatePrompt, setGeneratePrompt] = useState('');
+            const [generating, setGenerating] = useState(false);
+            
+            const generateLetterFromPrompt = async () => {
+                if (!generatePrompt.trim()) { window.showToast('Masukkan deskripsi surat', 'error'); return; }
+                setGenerating(true);
+                const systemMsg = `Anda adalah pembuat surat profesional. Output dalam format JSON:
+{
+  "title": "judul surat",
+  "ref": "nomor referensi",
+  "date": "tanggal",
+  "recipient": "nama dan alamat penerima (bisa multi-baris)",
+  "subject": "perihal",
+  "paragraphs": ["paragraf1", "paragraf2", ...],
+  "tableHeaders": ["kolom1", "kolom2", ...],
+  "tableRows": [["data1", "data2", ...], ...],
+  "signature": "tanda tangan dan jabatan",
+  "footer": "kaki surat"
+}
+Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${generatePrompt}`;
+                try {
+                    const res = await callAI(systemMsg, "Output hanya JSON valid.");
+                    const match = res.match(/\{[\s\S]*\}/);
+                    if (!match) throw new Error('Respon bukan JSON');
+                    const data = JSON.parse(match[0]);
+                    setDocTitle(data.title || 'SURAT');
+                    setDocRef(data.ref || 'REF-' + Date.now());
+                    setDocDate(data.date || new Date().toLocaleDateString('id-ID'));
+                    setRecipient(data.recipient || '');
+                    setSubject(data.subject || '');
+                    if (data.paragraphs) setParagraphs(data.paragraphs);
+                    if (data.tableHeaders && data.tableRows) setTableData({ headers: data.tableHeaders, rows: data.tableRows });
+                    if (data.signature) setSignature(data.signature);
+                    if (data.footer) setFooter(data.footer);
+                    window.showToast('Surat berhasil digenerate');
+                } catch (err) {
+                    window.showToast('Gagal generate: ' + err.message, 'error');
+                } finally { setGenerating(false); }
+            };
+            
+            // Manajemen tabel
+            const addTableRow = () => {
+                const newRow = tableData.headers.map(() => '');
+                setTableData(prev => ({ ...prev, rows: [...prev.rows, newRow] }));
+            };
+            const removeTableRow = (idx) => {
+                setTableData(prev => ({ ...prev, rows: prev.rows.filter((_, i) => i !== idx) }));
+            };
+            const updateTableRow = (rowIdx, colIdx, value) => {
+                const newRows = [...tableData.rows];
+                newRows[rowIdx][colIdx] = value;
+                setTableData(prev => ({ ...prev, rows: newRows }));
+            };
+            const addTableColumn = () => {
+                const newHeader = `Kolom ${tableData.headers.length + 1}`;
+                setTableData(prev => ({
+                    headers: [...prev.headers, newHeader],
+                    rows: prev.rows.map(row => [...row, ''])
+                }));
+            };
+            const updateTableHeader = (colIdx, value) => {
+                const newHeaders = [...tableData.headers];
+                newHeaders[colIdx] = value;
+                setTableData(prev => ({ ...prev, headers: newHeaders }));
+            };
+            
+            // Optimasi gaya surat dengan AI
+            const optimizeLetterStyle = async () => {
+                const fullContent = `Judul: ${docTitle}\nPerihal: ${subject}\nIsi: ${paragraphs.join(' ')}`;
+                const prompt = `Perbaiki tata bahasa dan gaya surat berikut menjadi lebih profesional dan formal. Jangan ubah data penting. Output dalam format JSON sama seperti generate: {"title":"...","ref":"...","date":"...","recipient":"...","subject":"...","paragraphs":[...],"tableHeaders":[...],"tableRows":[...],"signature":"...","footer":"..."}`;
+                try {
+                    const res = await callAI(prompt + "\n\n" + fullContent);
+                    const match = res.match(/\{[\s\S]*\}/);
+                    if (match) {
+                        const data = JSON.parse(match[0]);
+                        if (data.title) setDocTitle(data.title);
+                        if (data.ref) setDocRef(data.ref);
+                        if (data.date) setDocDate(data.date);
+                        if (data.recipient) setRecipient(data.recipient);
+                        if (data.subject) setSubject(data.subject);
+                        if (data.paragraphs) setParagraphs(data.paragraphs);
+                        if (data.tableHeaders && data.tableRows) setTableData({ headers: data.tableHeaders, rows: data.tableRows });
+                        if (data.signature) setSignature(data.signature);
+                        if (data.footer) setFooter(data.footer);
+                        window.showToast('Gaya surat dioptimasi');
+                    }
+                } catch (err) {
+                    window.showToast('Optimasi gagal', 'error');
                 }
             };
             
-            const generateWithAI = async () => {
-                const prompt = `Buat isi surat resmi untuk "TK Mall Alliance" tentang kemitraan. Gunakan format formal, paragraf jelas, gunakan <br> untuk baris baru.`;
-                try {
-                    const res = await callAI(prompt);
-                    setIsi(res.replace(/\n/g, '<br>'));
-                    window.showToast('Isi surat dibuat AI');
-                } catch (err) { window.showToast(err.message, 'error'); }
+            // Cetak hanya surat
+            const handlePrint = () => {
+                const printContent = document.getElementById('print-area').cloneNode(true);
+                const style = document.createElement('style');
+                style.textContent = `
+                    body { margin: 0; padding: 0; background: white; }
+                    .letter-print { max-width: 210mm; margin: 0 auto; background: ${theme.bg}; color: ${theme.text}; padding: 15mm; }
+                    .header-print { border-bottom: 2px solid ${theme.accent}; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+                    .table-print { width: 100%; border-collapse: collapse; margin: 15px 0; }
+                    .table-print th, .table-print td { border: 1px solid ${theme.border}; padding: 8px; text-align: left; }
+                    .table-print th { background: ${theme.tableHeader}; color: ${theme.tableHeaderText}; }
+                    .signature-print { margin-top: 30px; text-align: right; white-space: pre-wrap; }
+                    .footer-print { margin-top: 20px; text-align: center; font-size: 10px; border-top: 1px solid ${theme.border}; padding-top: 8px; }
+                `;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html><head><title>Cetak Surat</title>${style.outerHTML}</head><body>
+                    <div class="letter-print">${printContent.innerHTML}</div>
+                    </body></html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
             };
             
-            const optimizeGaya = async () => {
-                const prompt = `Perbaiki gaya surat berikut menjadi lebih formal, baku, profesional. Output teks dengan <br> untuk baris baru: ${isi}`;
-                try {
-                    const res = await callAI(prompt);
-                    setIsi(res.replace(/\n/g, '<br>'));
-                    window.showToast('Gaya dioptimasi');
-                } catch (err) { window.showToast(err.message, 'error'); }
-            };
-            
-            const downloadHtml = () => {
-                const htmlContent = `
-                <!DOCTYPE html><html><head><meta charset="UTF-8"><title>Surat</title><style>
-                body { margin: 0; padding: 20mm; background: white; }
-                .letter-page { max-width: 210mm; margin: 0 auto; }
-                .header { display: flex; justify-content: space-between; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px; }
-                .logo-img { height: 50px; }
-                .title-surat { text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; }
-                .signature { margin-top: 50px; text-align: right; }
-                .footer { margin-top: 30px; text-align: center; font-size: 10px; border-top: 1px solid #ccc; padding-top: 8px; }
-                </style></head><body>
-                <div class="letter-page">
-                    <div class="header">
-                        <div><img class="logo-img" src="${logo || ''}" alt="logo"></div>
-                        <div><strong>TK MALL ALLIANCE</strong><br>Gedung Alliance Mall Lt. 2</div>
+            // Preview surat
+            const LetterPreview = () => (
+                <div id="print-area" className="letter-preview" style={{ background: theme.bg, color: theme.text, borderRadius: '12px', padding: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                    <div className="header-print" style={{ borderBottom: `2px solid ${theme.accent}`, paddingBottom: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                        <div><strong>ALLIANCE MALL TK</strong><br /><span style={{ fontSize: '12px' }}>GLOBAL COMMERCE PLATFORM</span></div>
+                        <div style={{ textAlign: 'right' }}>No. {docRef}<br />Tanggal: {docDate}</div>
                     </div>
-                    <div class="title-surat">${judul}</div>
-                    <div class="nomor-surat">Nomor: ${nomor}</div>
-                    <div>${isi}</div>
-                    <div class="signature">${tanggal}<br><br><br>${ttd}</div>
-                    <div class="footer">Dokumen Resmi TK Mall Alliance</div>
+                    <div className="title-doc" style={{ fontSize: '18px', fontWeight: 'bold', textTransform: 'uppercase', textAlign: 'center' }}>{docTitle}</div>
+                    {recipient && <div style={{ margin: '15px 0', whiteSpace: 'pre-wrap' }}>Kepada Yth.<br />{recipient}</div>}
+                    {subject && <div style={{ fontWeight: 'bold', margin: '10px 0' }}>Perihal: {subject}</div>}
+                    {paragraphs.map((p, idx) => <p key={idx} style={{ margin: '8px 0', lineHeight: '1.5' }}>{p}</p>)}
+                    {tableData.headers.length > 0 && (
+                        <table className="table-print" style={{ width: '100%', borderCollapse: 'collapse', margin: '15px 0' }}>
+                            <thead><tr>{tableData.headers.map((h, i) => <th key={i} style={{ border: `1px solid ${theme.border}`, padding: '8px', background: theme.tableHeader, color: theme.tableHeaderText }}>{h}</th>)}</tr></thead>
+                            <tbody>
+                                {tableData.rows.map((row, ri) => (
+                                    <tr key={ri}>{row.map((cell, ci) => <td key={ci} style={{ border: `1px solid ${theme.border}`, padding: '8px', background: ri % 2 === 0 ? theme.bg : theme.tableRowEven }}>{cell}</td>)}</tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                    <div className="signature-print" style={{ marginTop: '30px', textAlign: 'right', whiteSpace: 'pre-wrap' }}>{signature}</div>
+                    <div className="footer-print" style={{ marginTop: '20px', textAlign: 'center', fontSize: '10px', borderTop: `1px solid ${theme.border}`, paddingTop: '8px' }}>{footer}</div>
                 </div>
-                </body></html>`;
-                const blob = new Blob([htmlContent], {type: 'text/html'});
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'surat.html';
-                a.click();
-                URL.revokeObjectURL(a.href);
-            };
+            );
             
-            return createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6' },
-                createElement('div', { className: 'space-y-4' },
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Logo'), createElement('input', { type: 'file', accept: 'image/*', onChange: handleLogoUpload, className: 'w-full' })),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Jenis Surat'), createElement('select', { className: 'w-full p-2 rounded border', defaultValue: '#3b82f6', onChange: (e) => document.documentElement.style.setProperty('--primary-color', e.target.value) }, 
-                        createElement('option', { value: '#3b82f6' }, 'Pemberitahuan (Biru)'),
-                        createElement('option', { value: '#003366' }, 'Perintah (Navy)'),
-                        createElement('option', { value: '#28a745' }, 'Tugas (Hijau)'),
-                        createElement('option', { value: '#8b0000' }, 'Peringatan (Merah)')
-                    )),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Judul'), createElement('input', { value: judul, onChange: (e) => setJudul(e.target.value), className: 'w-full p-2 rounded border' })),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Nomor'), createElement('input', { value: nomor, onChange: (e) => setNomor(e.target.value), className: 'w-full p-2 rounded border' })),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Isi (dengan <br>)'), createElement('textarea', { value: isi, onChange: (e) => setIsi(e.target.value), rows: 8, className: 'w-full p-2 rounded border' })),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Tanggal'), createElement('input', { value: tanggal, onChange: (e) => setTanggal(e.target.value), className: 'w-full p-2 rounded border' })),
-                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Penandatangan'), createElement('input', { value: ttd, onChange: (e) => setTtd(e.target.value), className: 'w-full p-2 rounded border' })),
-                    createElement('div', { className: 'flex gap-3' },
-                        createElement('button', { onClick: generateWithAI, className: 'px-4 py-2 bg-green-600 text-white rounded-full' }, '🤖 Generate AI'),
-                        createElement('button', { onClick: optimizeGaya, className: 'px-4 py-2 bg-blue-600 text-white rounded-full' }, '✨ Optimasi Gaya')
+            return createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' },
+                // Panel kiri kontrol
+                createElement('div', { className: 'space-y-4 form-container', style: { color: '#000' } },
+                    createElement('div', null,
+                        createElement('label', { className: 'block font-bold mb-1' }, '🎨 Gaya Surat'),
+                        createElement('select', { value: currentTheme, onChange: (e) => setCurrentTheme(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' },
+                            Object.keys(themes).map(key => createElement('option', { key, value: key }, themes[key].name))
+                        )
                     ),
-                    createElement('button', { onClick: downloadHtml, className: 'w-full py-2 bg-gray-800 text-white rounded-full' }, '💾 Download Surat (HTML)'),
-                    createElement('button', { onClick: () => window.print(), className: 'w-full py-2 bg-gray-600 text-white rounded-full' }, '🖨️ Cetak / PDF')
-                ),
-                createElement('div', { className: 'preview-container overflow-auto' },
-                    createElement('div', { className: 'letter-page bg-white text-black p-8 shadow-lg rounded-lg mx-auto', style: { maxWidth: '210mm' } },
-                        logo && createElement('img', { src: logo, className: 'watermark-img', alt: 'watermark' }),
-                        createElement('div', { className: 'header flex justify-between border-b-2 pb-2 mb-4', style: { borderBottomColor: 'var(--primary-color, #3b82f6)' } },
-                            createElement('div', null, logo && createElement('img', { src: logo, className: 'h-12', alt: 'logo' }), createElement('div', { className: 'text-sm' }, 'Alliance Mall | TikTok Partner')),
-                            createElement('div', { className: 'text-right text-xs' }, 'TK MALL ALLIANCE<br>Gedung Alliance Mall Lt. 2')
+                    createElement('div', null,
+                        createElement('label', { className: 'block font-bold mb-1' }, '✨ Generate Surat dari Deskripsi'),
+                        createElement('div', { className: 'flex gap-2' },
+                            createElement('input', { value: generatePrompt, onChange: (e) => setGeneratePrompt(e.target.value), placeholder: 'Contoh: buat surat peringatan keterlambatan pembayaran dengan tabel rincian tagihan', className: 'flex-1 p-2 rounded border text-black bg-white' }),
+                            createElement('button', { onClick: generateLetterFromPrompt, disabled: generating, className: 'px-4 py-2 bg-purple-600 text-white rounded-full' }, generating ? 'Memproses...' : '✨ Generate dengan AI')
+                        )
+                    ),
+                    createElement('hr'),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Judul'), createElement('input', { value: docTitle, onChange: (e) => setDocTitle(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'No. Referensi'), createElement('input', { value: docRef, onChange: (e) => setDocRef(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Tanggal'), createElement('input', { value: docDate, onChange: (e) => setDocDate(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Penerima'), createElement('textarea', { value: recipient, onChange: (e) => setRecipient(e.target.value), rows: 3, className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Perihal'), createElement('input', { value: subject, onChange: (e) => setSubject(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Paragraf (pisahkan dengan baris kosong)'), createElement('textarea', { value: paragraphs.join('\n\n'), onChange: (e) => setParagraphs(e.target.value.split('\n\n')), rows: 5, className: 'w-full p-2 rounded border text-black bg-white font-mono' })),
+                    createElement('div', null,
+                        createElement('label', { className: 'block font-bold mb-1' }, 'Tabel Dinamis'),
+                        createElement('div', { className: 'overflow-x-auto' },
+                            createElement('table', { className: 'w-full border-collapse' },
+                                createElement('thead', null,
+                                    createElement('tr', null,
+                                        tableData.headers.map((h, i) => createElement('th', { key: i, className: 'border p-1 bg-gray-100' }, createElement('input', { value: h, onChange: (e) => updateTableHeader(i, e.target.value), className: 'w-full min-w-[80px] p-1 text-black bg-white' }))),
+                                        createElement('th', { className: 'border p-1' }, createElement('button', { onClick: addTableColumn, className: 'text-blue-500' }, '+ Kolom'))
+                                    )
+                                ),
+                                createElement('tbody', null,
+                                    tableData.rows.map((row, ri) => createElement('tr', { key: ri },
+                                        row.map((cell, ci) => createElement('td', { key: ci, className: 'border p-1' }, createElement('input', { value: cell, onChange: (e) => updateTableRow(ri, ci, e.target.value), className: 'w-full p-1 text-black bg-white' }))),
+                                        createElement('td', { className: 'border p-1 text-center' }, createElement('button', { onClick: () => removeTableRow(ri), className: 'text-red-500' }, '🗑️'))
+                                    ))
+                                )
+                            )
                         ),
-                        createElement('div', { className: 'title-surat text-center font-bold text-lg uppercase' }, judul),
-                        createElement('div', { className: 'nomor-surat text-center text-sm mb-4' }, `Nomor: ${nomor}`),
-                        createElement('div', { dangerouslySetInnerHTML: { __html: isi } }),
-                        createElement('div', { className: 'signature mt-12 text-right' }, createElement('div', null, tanggal), createElement('div', { className: 'mt-8' }, ttd)),
-                        createElement('div', { className: 'footer text-center text-xs border-t pt-2 mt-6' }, 'Dokumen Resmi TK Mall Alliance - TikTok Partner')
+                        createElement('button', { onClick: addTableRow, className: 'mt-2 px-3 py-1 bg-gray-200 rounded-full text-sm' }, '+ Baris')
+                    ),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Tanda Tangan'), createElement('textarea', { value: signature, onChange: (e) => setSignature(e.target.value), rows: 2, className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', null, createElement('label', { className: 'block font-bold mb-1' }, 'Footer'), createElement('input', { value: footer, onChange: (e) => setFooter(e.target.value), className: 'w-full p-2 rounded border text-black bg-white' })),
+                    createElement('div', { className: 'flex gap-3' },
+                        createElement('button', { onClick: optimizeLetterStyle, className: 'px-4 py-2 bg-blue-600 text-white rounded-full' }, '✨ Optimasi Gaya dengan AI'),
+                        createElement('button', { onClick: handlePrint, className: 'px-4 py-2 bg-gray-800 text-white rounded-full' }, '🖨️ Cetak / PDF')
                     )
+                ),
+                // Panel kanan preview
+                createElement('div', { className: 'overflow-auto p-2 bg-gray-100 dark:bg-gray-800 rounded-xl' },
+                    createElement(LetterPreview, null)
                 )
             );
         }
         
-        // === Main App ===
+        // ========== MAIN APP ==========
         function App() {
             const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
             const [historyOpen, setHistoryOpen] = useState(false);
@@ -472,9 +561,9 @@
             }, [darkMode]);
             
             const tabs = [
-                { id: 'rewriter', label: '✍️ Sentence Rewriter', component: RewriterTab },
-                { id: 'fintech', label: '🏦 Fintech Formatter', component: FintechTab },
-                { id: 'surat', label: '📄 Surat Otomatis', component: SuratTab }
+                { id: 'rewriter', label: '✍️ Penyulap Kalimat Level Dewa', component: RewriterTab },
+                { id: 'fintech', label: '🏦 Bendahara online jahanam', component: FintechTab },
+                { id: 'surat', label: '📨 Surat dari Alam Semesta', component: SuratTab }
             ];
             
             return createElement('div', { className: 'relative min-h-screen' },
@@ -491,10 +580,9 @@
                         createElement('div', { className: 'flex flex-wrap items-center gap-4' },
                             createElement('span', { className: 'font-semibold' }, '🤖 AI Engine:'),
                             createElement('select', { id: 'globalProvider', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' },
-                                createElement('option', { value: 'pollinations' }, 'Pollinations AI (Gratis)'),
-                                createElement('option', { value: 'githubmodels' }, 'GitHub Models (Gratis)'),
-                                createElement('option', { value: 'groq' }, 'Groq (Llama 3.3)'),
-                                createElement('option', { value: 'gemini' }, 'Google Gemini')
+                                createElement('option', { value: 'pollinations' }, 'Pollinations AI (Gratis, Stabil)'),
+                                createElement('option', { value: 'groq' }, 'Groq (Llama 3.3) - butuh API key'),
+                                createElement('option', { value: 'gemini' }, 'Google Gemini - butuh API key')
                             ),
                             createElement('input', { type: 'password', id: 'globalApiKey', placeholder: 'API Key (jika perlu)', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' })
                         )
@@ -517,7 +605,6 @@
             );
         }
         
-        // Render
         const root = createRoot(document.getElementById('root'));
         root.render(createElement(App, null));
     </script>
