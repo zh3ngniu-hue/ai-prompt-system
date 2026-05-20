@@ -18,10 +18,7 @@
         .dark ::-webkit-scrollbar-track { background: #2d2d2d; }
         .toast { animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        /* Preview surat */
-        .letter-preview {
-            transition: all 0.2s;
-        }
+        .letter-preview { transition: all 0.2s; }
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -61,14 +58,18 @@
                         body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages })
                     });
                     const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || `Groq error: ${res.status}`);
                     return data.choices[0].message.content;
                 } else if (provider === 'gemini') {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`;
+                    // Gunakan model yang lebih stabil
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                     const res = await fetch(url, {
                         method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
                     const data = await res.json();
+                    if (!res.ok) throw new Error(data.error?.message || `Gemini error: ${res.status}`);
+                    if (!data.candidates || data.candidates.length === 0) throw new Error('Tidak ada respons dari Gemini');
                     return data.candidates[0].content.parts[0].text;
                 }
                 throw new Error('Provider tidak dikenal');
@@ -193,7 +194,7 @@
             );
         }
         
-        // ========== REWRITER TAB (Penyulap Kalimat Level Dewa) ==========
+        // ========== REWRITER TAB ==========
         function RewriterTab() {
             const [text, setText] = useState('Dengan adanya inovasi teknologi, kita harus beradaptasi secara cepat agar tidak tertinggal dari kompetitor global.');
             const [psycho, setPsycho] = useState(false);
@@ -263,7 +264,7 @@
             );
         }
         
-        // ========== FINTECH TAB (Bendahara online jahanam) ==========
+        // ========== FINTECH TAB ==========
         function FintechTab() {
             const [input, setInput] = useState('BCA an. Ahmad Fauzi no rek 1234567890123456');
             const [output, setOutput] = useState('');
@@ -315,11 +316,10 @@
             );
         }
         
-        // ========== SURAT TAB (Surat dari Alam Semesta) ==========
+        // ========== SURAT TAB ==========
         function SuratTab() {
             const { callAI } = useAI();
             
-            // State untuk data surat
             const [docTitle, setDocTitle] = useState('SURAT PEMBERITAHUAN KEPATUHAN');
             const [docRef, setDocRef] = useState('AMTK-COMPLIANCE-2026-0427-178');
             const [docDate, setDocDate] = useState('27 April 2026');
@@ -336,7 +336,6 @@
             const [signature, setSignature] = useState('Divisi Kepatuhan & Manajemen Risiko\nAlliance Mall TK');
             const [footer, setFooter] = useState('COMPLIANCE & TRUST | YOUR SECURITY IS OUR PRIORITY');
             
-            // Gaya tema (banyak pilihan)
             const themes = {
                 modernBlue: { name: 'Modern Biru', bg: 'white', text: '#1e293b', accent: '#2563eb', accentBg: '#dbeafe', border: '#bfdbfe', tableHeader: '#2563eb', tableHeaderText: 'white', tableRowEven: '#f8fafc' },
                 freshGreen: { name: 'Hijau Segar', bg: '#f0fdf4', text: '#14532d', accent: '#16a34a', accentBg: '#dcfce7', border: '#bbf7d0', tableHeader: '#15803d', tableHeaderText: 'white', tableRowEven: '#f0fdf4' },
@@ -349,7 +348,6 @@
             const [currentTheme, setCurrentTheme] = useState('modernBlue');
             const theme = themes[currentTheme];
             
-            // Generate surat dari deskripsi
             const [generatePrompt, setGeneratePrompt] = useState('');
             const [generating, setGenerating] = useState(false);
             
@@ -390,7 +388,6 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                 } finally { setGenerating(false); }
             };
             
-            // Manajemen tabel
             const addTableRow = () => {
                 const newRow = tableData.headers.map(() => '');
                 setTableData(prev => ({ ...prev, rows: [...prev.rows, newRow] }));
@@ -416,7 +413,6 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                 setTableData(prev => ({ ...prev, headers: newHeaders }));
             };
             
-            // Optimasi gaya surat dengan AI
             const optimizeLetterStyle = async () => {
                 const fullContent = `Judul: ${docTitle}\nPerihal: ${subject}\nIsi: ${paragraphs.join(' ')}`;
                 const prompt = `Perbaiki tata bahasa dan gaya surat berikut menjadi lebih profesional dan formal. Jangan ubah data penting. Output dalam format JSON sama seperti generate: {"title":"...","ref":"...","date":"...","recipient":"...","subject":"...","paragraphs":[...],"tableHeaders":[...],"tableRows":[...],"signature":"...","footer":"..."}`;
@@ -441,7 +437,6 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                 }
             };
             
-            // Cetak hanya surat
             const handlePrint = () => {
                 const printContent = document.getElementById('print-area').cloneNode(true);
                 const style = document.createElement('style');
@@ -465,7 +460,6 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                 printWindow.print();
             };
             
-            // Preview surat
             const LetterPreview = () => (
                 <div id="print-area" className="letter-preview" style={{ background: theme.bg, color: theme.text, borderRadius: '12px', padding: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
                     <div className="header-print" style={{ borderBottom: `2px solid ${theme.accent}`, paddingBottom: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
@@ -478,7 +472,7 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                     {paragraphs.map((p, idx) => <p key={idx} style={{ margin: '8px 0', lineHeight: '1.5' }}>{p}</p>)}
                     {tableData.headers.length > 0 && (
                         <table className="table-print" style={{ width: '100%', borderCollapse: 'collapse', margin: '15px 0' }}>
-                            <thead><tr>{tableData.headers.map((h, i) => <th key={i} style={{ border: `1px solid ${theme.border}`, padding: '8px', background: theme.tableHeader, color: theme.tableHeaderText }}>{h}</th>)}</tr></thead>
+                            <thead><tr>{tableData.headers.map((h, i) => <th key={i} style={{ border: `1px solid ${theme.border}`, padding: '8px', background: theme.tableHeader, color: theme.tableHeaderText }}>{h}</th>)}</thead>
                             <tbody>
                                 {tableData.rows.map((row, ri) => (
                                     <tr key={ri}>{row.map((cell, ci) => <td key={ci} style={{ border: `1px solid ${theme.border}`, padding: '8px', background: ri % 2 === 0 ? theme.bg : theme.tableRowEven }}>{cell}</td>)}</tr>
@@ -492,7 +486,6 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
             );
             
             return createElement('div', { className: 'grid grid-cols-1 lg:grid-cols-2 gap-6' },
-                // Panel kiri kontrol
                 createElement('div', { className: 'space-y-4 form-container', style: { color: '#000' } },
                     createElement('div', null,
                         createElement('label', { className: 'block font-bold mb-1' }, '🎨 Gaya Surat'),
@@ -541,24 +534,66 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                         createElement('button', { onClick: handlePrint, className: 'px-4 py-2 bg-gray-800 text-white rounded-full' }, '🖨️ Cetak / PDF')
                     )
                 ),
-                // Panel kanan preview
                 createElement('div', { className: 'overflow-auto p-2 bg-gray-100 dark:bg-gray-800 rounded-xl' },
                     createElement(LetterPreview, null)
                 )
             );
         }
         
-        // ========== MAIN APP ==========
+        // ========== MAIN APP (dengan Verifikasi API Key) ==========
         function App() {
             const [darkMode, setDarkMode] = useState(() => localStorage.getItem('darkMode') === 'true');
             const [historyOpen, setHistoryOpen] = useState(false);
             const [activeTab, setActiveTab] = useState('rewriter');
+            const [verifying, setVerifying] = useState(false);
             
             useEffect(() => {
                 if (darkMode) document.documentElement.classList.add('dark');
                 else document.documentElement.classList.remove('dark');
                 localStorage.setItem('darkMode', darkMode);
             }, [darkMode]);
+            
+            const verifyApiKey = async () => {
+                const provider = document.getElementById('globalProvider')?.value;
+                let apiKey = document.getElementById('globalApiKey')?.value.trim();
+                if (!apiKey) {
+                    window.showToast('Masukkan API Key terlebih dahulu', 'error');
+                    return;
+                }
+                if (provider !== 'groq' && provider !== 'gemini') {
+                    window.showToast('Verifikasi hanya untuk Groq atau Gemini', 'error');
+                    return;
+                }
+                setVerifying(true);
+                try {
+                    let testPrompt = "Balas dengan kata 'OK' saja.";
+                    if (provider === 'gemini') {
+                        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                        const res = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ contents: [{ parts: [{ text: testPrompt }] }] })
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error?.message || 'Koneksi gagal');
+                        if (!data.candidates || data.candidates.length === 0) throw new Error('Tidak ada respons');
+                        window.showToast('✅ API Key Gemini valid!', 'info');
+                    } else if (provider === 'groq') {
+                        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                            body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: testPrompt }] })
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error?.message || 'Koneksi gagal');
+                        window.showToast('✅ API Key Groq valid!', 'info');
+                    }
+                } catch (err) {
+                    window.showToast(`❌ Verifikasi gagal: ${err.message}`, 'error');
+                } finally {
+                    setVerifying(false);
+                }
+            };
             
             const tabs = [
                 { id: 'rewriter', label: '✍️ Penyulap Kalimat Level Dewa', component: RewriterTab },
@@ -584,7 +619,8 @@ Gunakan data yang sesuai. Buat surat yang profesional dan sesuai permintaan: ${g
                                 createElement('option', { value: 'groq' }, 'Groq (Llama 3.3) - butuh API key'),
                                 createElement('option', { value: 'gemini' }, 'Google Gemini - butuh API key')
                             ),
-                            createElement('input', { type: 'password', id: 'globalApiKey', placeholder: 'API Key (jika perlu)', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' })
+                            createElement('input', { type: 'password', id: 'globalApiKey', placeholder: 'API Key (jika perlu)', className: 'px-3 py-2 rounded-md border bg-white dark:bg-gray-700' }),
+                            createElement('button', { onClick: verifyApiKey, disabled: verifying, className: 'px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50' }, verifying ? 'Memverifikasi...' : '🔑 Verifikasi')
                         )
                     ),
                     createElement('div', { className: 'flex gap-2 border-b mb-6' },
